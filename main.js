@@ -230,6 +230,8 @@ fetch(capsUrl)
     let isSplit = false;
     let leftLayerSelectorDiv = null;
     let rightLayerSelectorDiv = null;
+    let leftMapMoveendListener = null;
+    let rightMapMoveendListener = null;
 
     // --- Map synchronization for split screen ---
     function syncViews(mapA, mapB) {
@@ -311,6 +313,15 @@ fetch(capsUrl)
       });
       document.getElementById('map-left').appendChild(leftLayerSelectorDiv);
       document.getElementById('map-right').appendChild(rightLayerSelectorDiv);
+      // Add moveend listener to leftMap and rightMap
+      leftMapMoveendListener = function () {
+        if (!restoringFromPermalink && permalinkInitialized) updatePermalinkWithFeatures();
+      };
+      rightMapMoveendListener = function () {
+        if (!restoringFromPermalink && permalinkInitialized) updatePermalinkWithFeatures();
+      };
+      leftMap.on('moveend', leftMapMoveendListener);
+      rightMap.on('moveend', rightMapMoveendListener);
     }
     function deactivateSplitScreen() {
       isSplit = false;
@@ -321,6 +332,11 @@ fetch(capsUrl)
       if (rightMap) rightMap.setTarget(null);
       if (leftLayerSelectorDiv) leftLayerSelectorDiv.remove();
       if (rightLayerSelectorDiv) rightLayerSelectorDiv.remove();
+      // Remove moveend listeners
+      if (leftMap && leftMapMoveendListener) leftMap.un('moveend', leftMapMoveendListener);
+      leftMapMoveendListener = null;
+      if (rightMap && rightMapMoveendListener) rightMap.un('moveend', rightMapMoveendListener);
+      rightMapMoveendListener = null;
       leftMap = null;
       rightMap = null;
       leftLayerSelectorDiv = null;
