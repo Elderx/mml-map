@@ -14,7 +14,8 @@ const apiKey = '977cd66e-8512-460a-83d3-cb405325c3ff',
 const hardcodedLayers = [
   { id: 'taustakartta', name: 'Taustakartta' },
   { id: 'maastokartta', name: 'Maastokartta' },
-  { id: 'selkokartta', name: 'Selkokartta' }
+  { id: 'selkokartta', name: 'Selkokartta' },
+  { id: 'ortokuva', name: 'Ortokuva' }
 ];
 
 const parser = new WMTSCapabilities();
