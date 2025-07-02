@@ -91,6 +91,10 @@ fetch(capsUrl)
       } else {
         params += `&layer=${layerId}`;
       }
+      // Add marker coordinates if present
+      if (lastClickCoords && lastClickCoords.length === 2) {
+        params += `&markerLat=${lastClickCoords[1].toFixed(7)}&markerLon=${lastClickCoords[0].toFixed(7)}`;
+      }
       window.history.replaceState({}, '', params);
     }
 
@@ -523,6 +527,12 @@ fetch(capsUrl)
         if (leftMap) leftMap.addLayer(leftClickMarkerLayer);
         if (rightMap) rightMap.addLayer(rightClickMarkerLayer);
       }
+      // Update URL with marker
+      const view = isSplit && leftMap ? leftMap.getView() : map.getView();
+      const zoom = view.getZoom();
+      const center = view.getCenter();
+      const layerId = !isSplit ? (map.getLayers().item(0).getSource().getLayer ? map.getLayers().item(0).getSource().getLayer() : hardcodedLayers[initialLayerIdx].id) : null;
+      updatePermalink(center, zoom, layerId, isSplit, leftLayerId, rightLayerId);
     }
 
     // Add click event listeners
@@ -531,4 +541,38 @@ fetch(capsUrl)
       showClickMarker(coord[0], coord[1]);
     }
     map.on('singleclick', handleMapClick);
+
+    // On load, if markerLat and markerLon are present, show the marker
+    if (params.markerLat && params.markerLon) {
+      const markerLat = parseFloat(params.markerLat);
+      const markerLon = parseFloat(params.markerLon);
+      if (!isNaN(markerLat) && !isNaN(markerLon)) {
+        showClickMarker(markerLon, markerLat);
+      }
+    }
+
+    // Remove features button logic
+    document.getElementById('remove-features-btn').addEventListener('click', function () {
+      // Remove click marker from all maps
+      if (clickMarkerLayer) map.removeLayer(clickMarkerLayer);
+      if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
+      if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
+      clickMarkerLayer = null;
+      leftClickMarkerLayer = null;
+      rightClickMarkerLayer = null;
+      lastClickCoords = null;
+      // Remove search marker from all maps
+      if (searchMarkerLayer) map.removeLayer(searchMarkerLayer);
+      if (leftSearchMarkerLayer && leftMap) leftMap.removeLayer(leftSearchMarkerLayer);
+      if (rightSearchMarkerLayer && rightMap) rightMap.removeLayer(rightSearchMarkerLayer);
+      searchMarkerLayer = null;
+      leftSearchMarkerLayer = null;
+      rightSearchMarkerLayer = null;
+      lastSearchCoords = null;
+      // Remove markerLat and markerLon from the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('markerLat');
+      url.searchParams.delete('markerLon');
+      window.history.replaceState({}, '', url);
+    });
   });
