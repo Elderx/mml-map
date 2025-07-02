@@ -17,6 +17,8 @@ import Stroke from 'ol/style/Stroke.js';
 import Fill from 'ol/style/Fill.js';
 import LineString from 'ol/geom/LineString.js';
 import Polygon from 'ol/geom/Polygon.js';
+import Overlay from 'ol/Overlay.js';
+import { getLength } from 'ol/sphere.js';
 
 const apiKey = '977cd66e-8512-460a-83d3-cb405325c3ff',
   epsg = 'EPSG:3857',
@@ -33,6 +35,24 @@ const hardcodedLayers = [
 
 const parser = new WMTSCapabilities();
 let map;
+let restoringFromPermalink = false;
+let permalinkInitialized = false;
+let markerCoords = null;
+let lineCoords = null;
+let polygonCoords = null;
+let measureCoords = null;
+let drawingMode = null;
+let lastClickCoords = null;
+let clickMarkerLayer = null;
+let leftClickMarkerLayer = null;
+let rightClickMarkerLayer = null;
+let drawnLineLayer = { main: null, left: null, right: null };
+let drawnLineFeature = { main: null, left: null, right: null };
+let drawnPolygonLayer = { main: null, left: null, right: null };
+let drawnPolygonFeature = { main: null, left: null, right: null };
+let measureLineLayer = { main: null, left: null, right: null };
+let measureLineFeature = { main: null, left: null, right: null };
+let measureLabelOverlay = { main: null, left: null, right: null };
 
 fetch(capsUrl)
   .then(function (response) {
@@ -49,6 +69,7 @@ fetch(capsUrl)
     const drawMarkerBtn = document.getElementById('draw-marker-btn');
     const drawLineBtn = document.getElementById('draw-line-btn');
     const drawPolygonBtn = document.getElementById('draw-polygon-btn');
+    const drawMeasureBtn = document.getElementById('draw-measure-btn');
 
     const result = parser.read(text);
 
@@ -103,8 +124,8 @@ fetch(capsUrl)
         params += `&layer=${layerId}`;
       }
       // Add marker coordinates if present
-      if (lastClickCoords && lastClickCoords.length === 2) {
-        params += `&markerLat=${lastClickCoords[1].toFixed(7)}&markerLon=${lastClickCoords[0].toFixed(7)}`;
+      if (markerCoords && markerCoords.length === 2) {
+        params += `&markerLat=${markerCoords[1].toFixed(7)}&markerLon=${markerCoords[0].toFixed(7)}`;
       }
       window.history.replaceState({}, '', params);
     }
@@ -291,28 +312,6 @@ fetch(capsUrl)
         view: new View({ center: center.slice(), zoom, rotation }),
         controls: []
       });
-      // Add selectors as DOM elements
-      leftLayerSelectorDiv = createLayerSelectorDropdown(leftLayerId, function (newLayerId) {
-        const newLayer = createTileLayer(newLayerId);
-        leftMap.getLayers().setAt(0, newLayer);
-        leftLayerId = newLayerId;
-        // Update URL on left layer change in split mode
-        updatePermalinkWithFeatures();
-      });
-      // Move left selector to top left
-      leftLayerSelectorDiv.style.left = '10px';
-      leftLayerSelectorDiv.style.right = '';
-      leftLayerSelectorDiv.style.top = '10px';
-      leftLayerSelectorDiv.style.position = 'absolute';
-      rightLayerSelectorDiv = createLayerSelectorDropdown(rightLayerId, function (newLayerId) {
-        const newLayer = createTileLayer(newLayerId);
-        rightMap.getLayers().setAt(0, newLayer);
-        rightLayerId = newLayerId;
-        // Update URL on right layer change in split mode
-        updatePermalinkWithFeatures();
-      });
-      document.getElementById('map-left').appendChild(leftLayerSelectorDiv);
-      document.getElementById('map-right').appendChild(rightLayerSelectorDiv);
       // Add moveend listener to leftMap and rightMap
       leftMapMoveendListener = function () {
         if (!restoringFromPermalink && permalinkInitialized) updatePermalinkWithFeatures();
@@ -322,6 +321,37 @@ fetch(capsUrl)
       };
       leftMap.on('moveend', leftMapMoveendListener);
       rightMap.on('moveend', rightMapMoveendListener);
+      // Layer selectors for split maps
+      leftLayerSelectorDiv = createLayerSelectorDropdown(leftLayerId, function(newLayerId) {
+        leftLayerId = newLayerId;
+        const newLayer = createTileLayer(newLayerId);
+        leftMap.getLayers().setAt(0, newLayer);
+        updatePermalinkWithFeatures();
+      });
+      // Move left selector to left side
+      leftLayerSelectorDiv.style.left = '10px';
+      leftLayerSelectorDiv.style.right = 'auto';
+      rightLayerSelectorDiv = createLayerSelectorDropdown(rightLayerId, function(newLayerId) {
+        rightLayerId = newLayerId;
+        const newLayer = createTileLayer(newLayerId);
+        rightMap.getLayers().setAt(0, newLayer);
+        updatePermalinkWithFeatures();
+      });
+      document.getElementById('map-left').appendChild(leftLayerSelectorDiv);
+      document.getElementById('map-right').appendChild(rightLayerSelectorDiv);
+      // Copy drawn features from main to left
+      copyDrawnFeatures('main', 'left', map, leftMap);
+      // Add drawn features to right for display only
+      copyDrawnFeatures('main', 'right', map, rightMap);
+      // Remove drawn features from main map
+      clearDrawnFeatures('main', map);
+      // Drawing interaction only on left map
+      if (drawingMode === 'line' && drawnLineLayer.left) {
+        // Re-add draw interaction if needed
+      }
+      if (drawingMode === 'polygon' && drawnPolygonLayer.left) {
+        // Re-add draw interaction if needed
+      }
     }
     function deactivateSplitScreen() {
       isSplit = false;
@@ -337,71 +367,6 @@ fetch(capsUrl)
       leftMapMoveendListener = null;
       if (rightMap && rightMapMoveendListener) rightMap.un('moveend', rightMapMoveendListener);
       rightMapMoveendListener = null;
-      leftMap = null;
-      rightMap = null;
-      leftLayerSelectorDiv = null;
-      rightLayerSelectorDiv = null;
-    }
-    // --- Refactored split screen logic ---
-    // Save original functions
-    const _activateSplitScreen = activateSplitScreen;
-    const _deactivateSplitScreen = deactivateSplitScreen;
-    activateSplitScreen = function() {
-      _activateSplitScreen();
-      if (leftMap && rightMap) {
-        syncViews(leftMap, rightMap);
-        syncViews(rightMap, leftMap);
-      }
-      if (lastSearchCoords) {
-        if (searchMarkerLayer) map.removeLayer(searchMarkerLayer);
-        leftSearchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
-        rightSearchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
-        if (leftMap) leftMap.addLayer(leftSearchMarkerLayer);
-        if (rightMap) rightMap.addLayer(rightSearchMarkerLayer);
-      }
-      if (lastClickCoords) {
-        if (clickMarkerLayer) map.removeLayer(clickMarkerLayer);
-        leftClickMarkerLayer = createClickMarkerLayer(lastClickCoords[0], lastClickCoords[1]);
-        rightClickMarkerLayer = createClickMarkerLayer(lastClickCoords[0], lastClickCoords[1]);
-        if (leftMap) leftMap.addLayer(leftClickMarkerLayer);
-        if (rightMap) rightMap.addLayer(rightClickMarkerLayer);
-      }
-      if (leftMap) leftMap.on('singleclick', handleMapClick);
-      if (rightMap) rightMap.on('singleclick', handleMapClick);
-      // Copy drawn features from main to left
-      copyDrawnFeatures('main', 'left', map, leftMap);
-      // Add drawn features to right for display only
-      copyDrawnFeatures('main', 'right', map, rightMap);
-      // Remove drawn features from main map
-      clearDrawnFeatures('main', map);
-      // Drawing interaction only on left map
-      if (drawingMode === 'line' && drawnLineLayer.left) {
-        // Re-add draw interaction if needed
-      }
-      if (drawingMode === 'polygon' && drawnPolygonLayer.left) {
-        // Re-add draw interaction if needed
-      }
-    };
-    deactivateSplitScreen = function() {
-      if (leftMap) leftMap.un('singleclick', handleMapClick);
-      if (rightMap) rightMap.un('singleclick', handleMapClick);
-      if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
-      if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
-      leftClickMarkerLayer = null;
-      rightClickMarkerLayer = null;
-      if (leftSearchMarkerLayer && leftMap) leftMap.removeLayer(leftSearchMarkerLayer);
-      if (rightSearchMarkerLayer && rightMap) rightMap.removeLayer(rightSearchMarkerLayer);
-      leftSearchMarkerLayer = null;
-      rightSearchMarkerLayer = null;
-      _deactivateSplitScreen();
-      if (lastClickCoords) {
-        clickMarkerLayer = createClickMarkerLayer(lastClickCoords[0], lastClickCoords[1]);
-        map.addLayer(clickMarkerLayer);
-      }
-      if (lastSearchCoords) {
-        searchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
-        map.addLayer(searchMarkerLayer);
-      }
       // Copy drawn features from left to main
       copyDrawnFeatures('left', 'main', leftMap, map);
       // Remove drawn features from left/right
@@ -414,23 +379,44 @@ fetch(capsUrl)
       if (drawingMode === 'polygon' && drawnPolygonLayer.main) {
         // Re-add draw interaction if needed
       }
+    }
+    // --- Refactored split screen logic ---
+    // Save original functions
+    const _activateSplitScreen = activateSplitScreen;
+    const _deactivateSplitScreen = deactivateSplitScreen;
+    activateSplitScreen = function() {
+      _activateSplitScreen();
+      if (leftMap && rightMap) {
+        syncViews(leftMap, rightMap);
+        syncViews(rightMap, leftMap);
+      }
+      showAllDrawables();
+    };
+    deactivateSplitScreen = function() {
+      _deactivateSplitScreen();
+      showAllDrawables();
     };
     // If initialIsSplit, activate split screen after map is ready
     if (initialIsSplit) {
       setTimeout(() => {
         activateSplitScreen();
         splitToggle.textContent = 'Single screen';
+        restoreFeaturesFromURL(params);
       }, 0);
+    } else {
+      restoreFeaturesFromURL(params);
     }
 
     splitToggle.addEventListener('click', function () {
       if (!isSplit) {
         activateSplitScreen();
         splitToggle.textContent = 'Single screen';
+        if (drawingMode === 'marker') enableMarkerClickHandler();
         updatePermalinkWithFeatures();
       } else {
         deactivateSplitScreen();
         splitToggle.textContent = 'Split screen';
+        if (drawingMode === 'marker') enableMarkerClickHandler();
         updatePermalinkWithFeatures();
       }
     });
@@ -453,12 +439,6 @@ fetch(capsUrl)
     let leftSearchMarkerLayer = null;
     let rightSearchMarkerLayer = null;
     let lastSearchCoords = null; // [lon, lat]
-
-    // --- Drawing feature variables ---
-    let drawnLineLayer = { main: null, left: null, right: null };
-    let drawnLineFeature = { main: null, left: null, right: null };
-    let drawnPolygonLayer = { main: null, left: null, right: null };
-    let drawnPolygonFeature = { main: null, left: null, right: null };
 
     function createSearchMarkerLayer(lon, lat) {
       const marker = new Feature({
@@ -531,11 +511,6 @@ fetch(capsUrl)
     }
 
     // --- Click marker logic ---
-    let clickMarkerLayer = null;
-    let leftClickMarkerLayer = null;
-    let rightClickMarkerLayer = null;
-    let lastClickCoords = null; // [lon, lat]
-
     function createClickMarkerLayer(lon, lat) {
       const marker = new Feature({
         geometry: new Point(fromLonLat([lon, lat]))
@@ -552,44 +527,66 @@ fetch(capsUrl)
     }
 
     function showClickMarker(lon, lat) {
-      lastClickCoords = [lon, lat];
+      lastClickCoords = lon != null && lat != null ? [lon, lat] : null;
+      markerCoords = lastClickCoords;
       // Remove previous marker layer if exists
-      if (clickMarkerLayer) map.removeLayer(clickMarkerLayer);
+      if (clickMarkerLayer && map) map.removeLayer(clickMarkerLayer);
       if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
       if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
       // Add to main map if not split
       if (!isSplit) {
-        clickMarkerLayer = createClickMarkerLayer(lon, lat);
-        map.addLayer(clickMarkerLayer);
+        if (lon != null && lat != null) {
+          clickMarkerLayer = createClickMarkerLayer(lon, lat);
+          map.addLayer(clickMarkerLayer);
+        }
       } else {
-        // Add to both split maps
-        leftClickMarkerLayer = createClickMarkerLayer(lon, lat);
-        rightClickMarkerLayer = createClickMarkerLayer(lon, lat);
-        if (leftMap) leftMap.addLayer(leftClickMarkerLayer);
-        if (rightMap) rightMap.addLayer(rightClickMarkerLayer);
+        if (lon != null && lat != null) {
+          leftClickMarkerLayer = createClickMarkerLayer(lon, lat);
+          rightClickMarkerLayer = createClickMarkerLayer(lon, lat);
+          if (leftMap) leftMap.addLayer(leftClickMarkerLayer);
+          if (rightMap) rightMap.addLayer(rightClickMarkerLayer);
+        }
       }
-      // Update URL with marker
-      const view = isSplit && leftMap ? leftMap.getView() : map.getView();
-      const zoom = view.getZoom();
-      const center = view.getCenter();
-      const layerId = !isSplit ? (map.getLayers().item(0).getSource().getLayer ? map.getLayers().item(0).getSource().getLayer() : hardcodedLayers[initialLayerIdx].id) : null;
-      updatePermalink(center, zoom, layerId, isSplit, leftLayerId, rightLayerId);
+      updatePermalinkWithFeatures();
     }
 
     // --- Drawing mode state and handler management ---
-    let drawingMode = null;
     let markerClickHandlerActive = false;
+    let markerClickHandlerActiveLeft = false;
+    let markerClickHandlerActiveRight = false;
     let drawInteraction = null;
     function enableMarkerClickHandler() {
-      if (!markerClickHandlerActive) {
-        map.on('singleclick', handleMapClick);
-        markerClickHandlerActive = true;
+      if (!isSplit) {
+        if (!markerClickHandlerActive) {
+          map.on('singleclick', handleMapClick);
+          markerClickHandlerActive = true;
+        }
+      } else {
+        if (leftMap && !markerClickHandlerActiveLeft) {
+          leftMap.on('singleclick', handleMapClick);
+          markerClickHandlerActiveLeft = true;
+        }
+        if (rightMap && !markerClickHandlerActiveRight) {
+          rightMap.on('singleclick', handleMapClick);
+          markerClickHandlerActiveRight = true;
+        }
       }
     }
     function disableMarkerClickHandler() {
-      if (markerClickHandlerActive) {
-        map.un('singleclick', handleMapClick);
-        markerClickHandlerActive = false;
+      if (!isSplit) {
+        if (markerClickHandlerActive) {
+          map.un('singleclick', handleMapClick);
+          markerClickHandlerActive = false;
+        }
+      } else {
+        if (leftMap && markerClickHandlerActiveLeft) {
+          leftMap.un('singleclick', handleMapClick);
+          markerClickHandlerActiveLeft = false;
+        }
+        if (rightMap && markerClickHandlerActiveRight) {
+          rightMap.un('singleclick', handleMapClick);
+          markerClickHandlerActiveRight = false;
+        }
       }
     }
     // By default, no drawing mode is active
@@ -610,6 +607,46 @@ fetch(capsUrl)
       feature.setStyle(new Style({ fill: new Fill({ color: 'rgba(0,200,255,0.5)' }), stroke: new Stroke({ color: 'blue', width: 2 }) }));
       vectorSource.addFeature(feature);
       return { layer: new VectorLayer({ source: vectorSource, zIndex: 103 }), feature };
+    }
+    // Helper to create measure line layer from coordinates
+    function createMeasureLineLayer(coords) {
+      const vectorSource = new VectorSource();
+      const feature = new Feature({ geometry: new LineString(coords) });
+      feature.setStyle(new Style({ stroke: new Stroke({ color: 'orange', width: 3, lineDash: [8, 8] }) }));
+      vectorSource.addFeature(feature);
+      return { layer: new VectorLayer({ source: vectorSource, zIndex: 104 }), feature };
+    }
+    // Helper to create a label overlay for the measure
+    function createMeasureLabelOverlay(coord, text) {
+      const div = document.createElement('div');
+      div.className = 'measure-label';
+      div.style.background = 'rgba(255,255,255,0.9)';
+      div.style.border = '1px solid #ffa500';
+      div.style.borderRadius = '6px';
+      div.style.padding = '2px 6px';
+      div.style.fontSize = '13px';
+      div.style.color = '#d2691e';
+      div.style.fontWeight = 'bold';
+      div.textContent = text;
+      return new Overlay({
+        element: div,
+        position: coord,
+        positioning: 'bottom-center',
+        stopEvent: false
+      });
+    }
+    // Helper to format length
+    function formatLength(line) {
+      const length = getLength(line);
+      return length > 1000 ? (length / 1000).toFixed(2) + ' km' : length.toFixed(2) + ' m';
+    }
+    // Helper to clear measure line and label
+    function clearMeasureLine(mapKey, mapObj) {
+      if (measureLineLayer[mapKey] && mapObj) mapObj.removeLayer(measureLineLayer[mapKey]);
+      measureLineLayer[mapKey] = null;
+      measureLineFeature[mapKey] = null;
+      if (measureLabelOverlay[mapKey] && mapObj) mapObj.removeOverlay(measureLabelOverlay[mapKey]);
+      measureLabelOverlay[mapKey] = null;
     }
 
     // Helper to copy features between maps
@@ -636,6 +673,24 @@ fetch(capsUrl)
         drawnPolygonFeature[to] = feature;
         if (mapTo) mapTo.addLayer(layer);
       }
+      // Measure line
+      if (measureLineLayer[to] && mapTo) mapTo.removeLayer(measureLineLayer[to]);
+      if (measureLabelOverlay[to] && mapTo) mapTo.removeOverlay(measureLabelOverlay[to]);
+      measureLineLayer[to] = null;
+      measureLineFeature[to] = null;
+      measureLabelOverlay[to] = null;
+      if (measureLineFeature[from]) {
+        const coords = measureLineFeature[from].getGeometry().getCoordinates();
+        const { layer, feature } = createMeasureLineLayer(coords);
+        measureLineLayer[to] = layer;
+        measureLineFeature[to] = feature;
+        if (mapTo) mapTo.addLayer(layer);
+        // Add label overlay for measure only
+        const len = formatLength(feature.getGeometry());
+        const overlay = createMeasureLabelOverlay(coords[coords.length - 1], len);
+        if (mapTo) mapTo.addOverlay(overlay);
+        measureLabelOverlay[to] = overlay;
+      }
     }
 
     // Helper to clear drawn features for a given mapKey ('main', 'left', 'right')
@@ -646,23 +701,125 @@ fetch(capsUrl)
       if (drawnPolygonLayer[mapKey] && mapObj) mapObj.removeLayer(drawnPolygonLayer[mapKey]);
       drawnPolygonLayer[mapKey] = null;
       drawnPolygonFeature[mapKey] = null;
+      // Also clear measure line
+      clearMeasureLine(mapKey, mapObj);
     }
 
-    // Drawing tool selection (refactored for per-map)
-    drawMarkerBtn.addEventListener('click', function () {
-      drawingMode = 'marker';
+    // --- Robust marker-style helpers for all drawables ---
+    function showLine(coords) {
+      lineCoords = coords && coords.length >= 2 ? coords : null;
+      // Remove existing
       if (!isSplit) {
-        clearDrawInteraction();
-        clearDrawnFeatures('main', map);
-        drawMenu.style.display = 'none';
-        enableMarkerClickHandler();
+        if (drawnLineLayer.main && map) map.removeLayer(drawnLineLayer.main);
+        drawnLineLayer.main = null;
+        drawnLineFeature.main = null;
+        if (coords && coords.length >= 2) {
+          const { layer, feature } = createLineLayer(coords);
+          drawnLineLayer.main = layer;
+          drawnLineFeature.main = feature;
+          map.addLayer(layer);
+        }
       } else {
-        clearDrawInteraction();
-        clearDrawnFeatures('left', leftMap);
-        drawMenu.style.display = 'none';
-        enableMarkerClickHandler();
+        if (drawnLineLayer.left && leftMap) leftMap.removeLayer(drawnLineLayer.left);
+        if (drawnLineLayer.right && rightMap) rightMap.removeLayer(drawnLineLayer.right);
+        drawnLineLayer.left = drawnLineLayer.right = null;
+        drawnLineFeature.left = drawnLineFeature.right = null;
+        if (coords && coords.length >= 2) {
+          // Left
+          const { layer: layerLeft, feature: featureLeft } = createLineLayer(coords);
+          drawnLineLayer.left = layerLeft;
+          drawnLineFeature.left = featureLeft;
+          leftMap.addLayer(layerLeft);
+          // Right
+          const { layer: layerRight, feature: featureRight } = createLineLayer(coords);
+          drawnLineLayer.right = layerRight;
+          drawnLineFeature.right = featureRight;
+          rightMap.addLayer(layerRight);
+        }
       }
-    });
+    }
+    function showPolygon(coords) {
+      polygonCoords = coords && coords.length >= 3 ? coords : null;
+      // Remove existing
+      if (!isSplit) {
+        if (drawnPolygonLayer.main && map) map.removeLayer(drawnPolygonLayer.main);
+        drawnPolygonLayer.main = null;
+        drawnPolygonFeature.main = null;
+        if (coords && coords.length >= 3) {
+          const { layer, feature } = createPolygonLayer(coords);
+          drawnPolygonLayer.main = layer;
+          drawnPolygonFeature.main = feature;
+          map.addLayer(layer);
+        }
+      } else {
+        if (drawnPolygonLayer.left && leftMap) leftMap.removeLayer(drawnPolygonLayer.left);
+        if (drawnPolygonLayer.right && rightMap) rightMap.removeLayer(drawnPolygonLayer.right);
+        drawnPolygonLayer.left = drawnPolygonLayer.right = null;
+        drawnPolygonFeature.left = drawnPolygonFeature.right = null;
+        if (coords && coords.length >= 3) {
+          // Left
+          const { layer: layerLeft, feature: featureLeft } = createPolygonLayer(coords);
+          drawnPolygonLayer.left = layerLeft;
+          drawnPolygonFeature.left = featureLeft;
+          leftMap.addLayer(layerLeft);
+          // Right
+          const { layer: layerRight, feature: featureRight } = createPolygonLayer(coords);
+          drawnPolygonLayer.right = layerRight;
+          drawnPolygonFeature.right = featureRight;
+          rightMap.addLayer(layerRight);
+        }
+      }
+    }
+    function showMeasureLine(coords) {
+      measureCoords = coords && coords.length >= 2 ? coords : null;
+      // Remove existing
+      if (!isSplit) {
+        if (measureLineLayer.main && map) map.removeLayer(measureLineLayer.main);
+        if (measureLabelOverlay.main && map) map.removeOverlay(measureLabelOverlay.main);
+        measureLineLayer.main = null;
+        measureLineFeature.main = null;
+        measureLabelOverlay.main = null;
+        if (coords && coords.length >= 2) {
+          const { layer, feature } = createMeasureLineLayer(coords);
+          measureLineLayer.main = layer;
+          measureLineFeature.main = feature;
+          map.addLayer(layer);
+          const len = formatLength(feature.getGeometry());
+          const overlay = createMeasureLabelOverlay(coords[coords.length - 1], len);
+          map.addOverlay(overlay);
+          measureLabelOverlay.main = overlay;
+        }
+      } else {
+        if (measureLineLayer.left && leftMap) leftMap.removeLayer(measureLineLayer.left);
+        if (measureLabelOverlay.left && leftMap) leftMap.removeOverlay(measureLabelOverlay.left);
+        if (measureLineLayer.right && rightMap) rightMap.removeLayer(measureLineLayer.right);
+        if (measureLabelOverlay.right && rightMap) rightMap.removeOverlay(measureLabelOverlay.right);
+        measureLineLayer.left = measureLineLayer.right = null;
+        measureLineFeature.left = measureLineFeature.right = null;
+        measureLabelOverlay.left = measureLabelOverlay.right = null;
+        if (coords && coords.length >= 2) {
+          // Left
+          const { layer: layerLeft, feature: featureLeft } = createMeasureLineLayer(coords);
+          measureLineLayer.left = layerLeft;
+          measureLineFeature.left = featureLeft;
+          leftMap.addLayer(layerLeft);
+          const len = formatLength(featureLeft.getGeometry());
+          const overlayLeft = createMeasureLabelOverlay(coords[coords.length - 1], len);
+          leftMap.addOverlay(overlayLeft);
+          measureLabelOverlay.left = overlayLeft;
+          // Right
+          const { layer: layerRight, feature: featureRight } = createMeasureLineLayer(coords);
+          measureLineLayer.right = layerRight;
+          measureLineFeature.right = featureRight;
+          rightMap.addLayer(layerRight);
+          const overlayRight = createMeasureLabelOverlay(coords[coords.length - 1], len);
+          rightMap.addOverlay(overlayRight);
+          measureLabelOverlay.right = overlayRight;
+        }
+      }
+    }
+
+    // --- Drawing tool selection (refactored for per-map) ---
     drawLineBtn.addEventListener('click', function () {
       drawingMode = 'line';
       clearAllMarkers();
@@ -677,11 +834,8 @@ fetch(capsUrl)
         map.addLayer(drawnLineLayer.main);
         drawInteraction = new Draw({ source: vectorSource, type: 'LineString', maxPoints: 2 });
         drawInteraction.on('drawend', function (evt) {
-          drawnLineFeature.main = evt.feature;
-          // Ensure the layer is present
-          if (drawnLineLayer.main && map.getLayers().getArray().indexOf(drawnLineLayer.main) === -1) {
-            map.addLayer(drawnLineLayer.main);
-          }
+          const coords = evt.feature.getGeometry().getCoordinates();
+          showLine(coords);
           clearDrawInteraction();
           drawingMode = null;
           updatePermalinkWithFeatures();
@@ -702,22 +856,9 @@ fetch(capsUrl)
         rightMap.addLayer(drawnLineLayer.right);
         // Draw interaction for left map
         const drawInteractionLeft = new Draw({ source: vectorSourceLeft, type: 'LineString', maxPoints: 2 });
-        let rightFeature = null;
-        drawInteractionLeft.on('drawstart', function (evt) {
-          // Create matching feature on right map
-          rightFeature = new Feature({ geometry: new LineString([]) });
-          rightFeature.setStyle(new Style({ stroke: new Stroke({ color: 'blue', width: 3 }) }));
-          vectorSourceRight.clear();
-          vectorSourceRight.addFeature(rightFeature);
-          // Sync geometry as user draws
-          evt.feature.getGeometry().on('change', function () {
-            const coords = evt.feature.getGeometry().getCoordinates();
-            rightFeature.getGeometry().setCoordinates(coords);
-          });
-        });
         drawInteractionLeft.on('drawend', function (evt) {
-          drawnLineFeature.left = evt.feature;
-          drawnLineFeature.right = rightFeature;
+          const coords = evt.feature.getGeometry().getCoordinates();
+          showLine(coords);
           clearDrawInteraction();
           drawingMode = null;
           updatePermalinkWithFeatures();
@@ -725,28 +866,14 @@ fetch(capsUrl)
         leftMap.addInteraction(drawInteractionLeft);
         // Draw interaction for right map
         const drawInteractionRight = new Draw({ source: vectorSourceRight, type: 'LineString', maxPoints: 2 });
-        let leftFeature = null;
-        drawInteractionRight.on('drawstart', function (evt) {
-          // Create matching feature on left map
-          leftFeature = new Feature({ geometry: new LineString([]) });
-          leftFeature.setStyle(new Style({ stroke: new Stroke({ color: 'blue', width: 3 }) }));
-          vectorSourceLeft.clear();
-          vectorSourceLeft.addFeature(leftFeature);
-          // Sync geometry as user draws
-          evt.feature.getGeometry().on('change', function () {
-            const coords = evt.feature.getGeometry().getCoordinates();
-            leftFeature.getGeometry().setCoordinates(coords);
-          });
-        });
         drawInteractionRight.on('drawend', function (evt) {
-          drawnLineFeature.right = evt.feature;
-          drawnLineFeature.left = leftFeature;
+          const coords = evt.feature.getGeometry().getCoordinates();
+          showLine(coords);
           clearDrawInteraction();
           drawingMode = null;
           updatePermalinkWithFeatures();
         });
         rightMap.addInteraction(drawInteractionRight);
-        // Store both interactions for clearing
         drawInteraction = { left: drawInteractionLeft, right: drawInteractionRight };
       }
     });
@@ -764,11 +891,8 @@ fetch(capsUrl)
         map.addLayer(drawnPolygonLayer.main);
         drawInteraction = new Draw({ source: vectorSource, type: 'Polygon' });
         drawInteraction.on('drawend', function (evt) {
-          drawnPolygonFeature.main = evt.feature;
-          // Ensure the layer is present
-          if (drawnPolygonLayer.main && map.getLayers().getArray().indexOf(drawnPolygonLayer.main) === -1) {
-            map.addLayer(drawnPolygonLayer.main);
-          }
+          const coords = evt.feature.getGeometry().getCoordinates()[0];
+          showPolygon(coords);
           clearDrawInteraction();
           drawingMode = null;
           updatePermalinkWithFeatures();
@@ -789,22 +913,9 @@ fetch(capsUrl)
         rightMap.addLayer(drawnPolygonLayer.right);
         // Draw interaction for left map
         const drawInteractionLeft = new Draw({ source: vectorSourceLeft, type: 'Polygon' });
-        let rightFeature = null;
-        drawInteractionLeft.on('drawstart', function (evt) {
-          // Create matching feature on right map
-          rightFeature = new Feature({ geometry: new Polygon([]) });
-          rightFeature.setStyle(new Style({ fill: new Fill({ color: 'rgba(0,200,255,0.5)' }), stroke: new Stroke({ color: 'blue', width: 2 }) }));
-          vectorSourceRight.clear();
-          vectorSourceRight.addFeature(rightFeature);
-          // Sync geometry as user draws
-          evt.feature.getGeometry().on('change', function () {
-            const coords = evt.feature.getGeometry().getCoordinates();
-            rightFeature.getGeometry().setCoordinates(coords);
-          });
-        });
         drawInteractionLeft.on('drawend', function (evt) {
-          drawnPolygonFeature.left = evt.feature;
-          drawnPolygonFeature.right = rightFeature;
+          const coords = evt.feature.getGeometry().getCoordinates()[0];
+          showPolygon(coords);
           clearDrawInteraction();
           drawingMode = null;
           updatePermalinkWithFeatures();
@@ -812,31 +923,280 @@ fetch(capsUrl)
         leftMap.addInteraction(drawInteractionLeft);
         // Draw interaction for right map
         const drawInteractionRight = new Draw({ source: vectorSourceRight, type: 'Polygon' });
-        let leftFeature = null;
-        drawInteractionRight.on('drawstart', function (evt) {
-          // Create matching feature on left map
-          leftFeature = new Feature({ geometry: new Polygon([]) });
-          leftFeature.setStyle(new Style({ fill: new Fill({ color: 'rgba(0,200,255,0.5)' }), stroke: new Stroke({ color: 'blue', width: 2 }) }));
-          vectorSourceLeft.clear();
-          vectorSourceLeft.addFeature(leftFeature);
-          // Sync geometry as user draws
-          evt.feature.getGeometry().on('change', function () {
-            const coords = evt.feature.getGeometry().getCoordinates();
-            leftFeature.getGeometry().setCoordinates(coords);
-          });
-        });
         drawInteractionRight.on('drawend', function (evt) {
-          drawnPolygonFeature.right = evt.feature;
-          drawnPolygonFeature.left = leftFeature;
+          const coords = evt.feature.getGeometry().getCoordinates()[0];
+          showPolygon(coords);
           clearDrawInteraction();
           drawingMode = null;
           updatePermalinkWithFeatures();
         });
         rightMap.addInteraction(drawInteractionRight);
-        // Store both interactions for clearing
         drawInteraction = { left: drawInteractionLeft, right: drawInteractionRight };
       }
     });
+    drawMeasureBtn.addEventListener('click', function () {
+      drawingMode = 'measure';
+      clearAllMarkers();
+      if (!isSplit) {
+        clearDrawInteraction();
+        clearDrawnFeatures('main', map);
+        clearMeasureLine('main', map);
+        drawMenu.style.display = 'none';
+        disableMarkerClickHandler();
+        // Add draw interaction for measure line
+        const vectorSource = new VectorSource();
+        measureLineLayer.main = new VectorLayer({ source: vectorSource, zIndex: 104, style: new Style({ stroke: new Stroke({ color: 'orange', width: 3, lineDash: [8, 8] }) }) });
+        map.addLayer(measureLineLayer.main);
+        drawInteraction = new Draw({ source: vectorSource, type: 'LineString' });
+        let labelOverlay = null;
+        drawInteraction.on('drawstart', function (evt) {
+          if (measureLabelOverlay.main && map) map.removeOverlay(measureLabelOverlay.main);
+          const geom = evt.feature.getGeometry();
+          geom.on('change', function () {
+            const coords = geom.getCoordinates();
+            if (coords.length > 1) {
+              const len = formatLength(geom);
+              if (!labelOverlay) {
+                labelOverlay = createMeasureLabelOverlay(coords[coords.length - 1], len);
+                map.addOverlay(labelOverlay);
+              } else {
+                labelOverlay.setPosition(coords[coords.length - 1]);
+                labelOverlay.getElement().textContent = len;
+              }
+            }
+          });
+        });
+        drawInteraction.on('drawend', function (evt) {
+          const coords = evt.feature.getGeometry().getCoordinates();
+          showMeasureLine(coords);
+          clearDrawInteraction();
+          drawingMode = null;
+          updatePermalinkWithFeatures();
+        });
+        map.addInteraction(drawInteraction);
+      } else {
+        clearDrawInteraction();
+        clearDrawnFeatures('left', leftMap);
+        clearDrawnFeatures('right', rightMap);
+        clearMeasureLine('left', leftMap);
+        clearMeasureLine('right', rightMap);
+        drawMenu.style.display = 'none';
+        disableMarkerClickHandler();
+        // Add draw interaction for measure line on both left and right maps
+        const vectorSourceLeft = new VectorSource();
+        measureLineLayer.left = new VectorLayer({ source: vectorSourceLeft, zIndex: 104, style: new Style({ stroke: new Stroke({ color: 'orange', width: 3, lineDash: [8, 8] }) }) });
+        leftMap.addLayer(measureLineLayer.left);
+        const vectorSourceRight = new VectorSource();
+        measureLineLayer.right = new VectorLayer({ source: vectorSourceRight, zIndex: 104, style: new Style({ stroke: new Stroke({ color: 'orange', width: 3, lineDash: [8, 8] }) }) });
+        rightMap.addLayer(measureLineLayer.right);
+        // Draw interaction for left map
+        const drawInteractionLeft = new Draw({ source: vectorSourceLeft, type: 'LineString' });
+        let labelOverlayLeft = null;
+        let rightFeature = null;
+        let labelOverlayRight = null;
+        drawInteractionLeft.on('drawstart', function (evt) {
+          if (measureLabelOverlay.left && leftMap) leftMap.removeOverlay(measureLabelOverlay.left);
+          if (measureLabelOverlay.right && rightMap) rightMap.removeOverlay(measureLabelOverlay.right);
+          const geom = evt.feature.getGeometry();
+          // Create matching feature on right map
+          rightFeature = new Feature({ geometry: new LineString([]) });
+          rightFeature.setStyle(new Style({ stroke: new Stroke({ color: 'orange', width: 3, lineDash: [8, 8] }) }));
+          vectorSourceRight.clear();
+          vectorSourceRight.addFeature(rightFeature);
+          geom.on('change', function () {
+            const coords = geom.getCoordinates();
+            if (coords.length > 1) {
+              const len = formatLength(geom);
+              if (!labelOverlayLeft) {
+                labelOverlayLeft = createMeasureLabelOverlay(coords[coords.length - 1], len);
+                leftMap.addOverlay(labelOverlayLeft);
+              } else {
+                labelOverlayLeft.setPosition(coords[coords.length - 1]);
+                labelOverlayLeft.getElement().textContent = len;
+              }
+              // Sync right
+              rightFeature.getGeometry().setCoordinates(coords);
+              if (!labelOverlayRight) {
+                labelOverlayRight = createMeasureLabelOverlay(coords[coords.length - 1], len);
+                rightMap.addOverlay(labelOverlayRight);
+              } else {
+                labelOverlayRight.setPosition(coords[coords.length - 1]);
+                labelOverlayRight.getElement().textContent = len;
+              }
+            }
+          });
+        });
+        drawInteractionLeft.on('drawend', function (evt) {
+          const coords = evt.feature.getGeometry().getCoordinates();
+          showMeasureLine(coords);
+          clearDrawInteraction();
+          drawingMode = null;
+          updatePermalinkWithFeatures();
+        });
+        leftMap.addInteraction(drawInteractionLeft);
+        // Draw interaction for right map
+        const drawInteractionRight = new Draw({ source: vectorSourceRight, type: 'LineString' });
+        let labelOverlayRight2 = null;
+        let leftFeature = null;
+        let labelOverlayLeft2 = null;
+        drawInteractionRight.on('drawstart', function (evt) {
+          if (measureLabelOverlay.right && rightMap) rightMap.removeOverlay(measureLabelOverlay.right);
+          if (measureLabelOverlay.left && leftMap) leftMap.removeOverlay(measureLabelOverlay.left);
+          const geom = evt.feature.getGeometry();
+          // Create matching feature on left map
+          leftFeature = new Feature({ geometry: new LineString([]) });
+          leftFeature.setStyle(new Style({ stroke: new Stroke({ color: 'orange', width: 3, lineDash: [8, 8] }) }));
+          vectorSourceLeft.clear();
+          vectorSourceLeft.addFeature(leftFeature);
+          geom.on('change', function () {
+            const coords = geom.getCoordinates();
+            if (coords.length > 1) {
+              const len = formatLength(geom);
+              if (!labelOverlayRight2) {
+                labelOverlayRight2 = createMeasureLabelOverlay(coords[coords.length - 1], len);
+                rightMap.addOverlay(labelOverlayRight2);
+              } else {
+                labelOverlayRight2.setPosition(coords[coords.length - 1]);
+                labelOverlayRight2.getElement().textContent = len;
+              }
+              // Sync left
+              leftFeature.getGeometry().setCoordinates(coords);
+              if (!labelOverlayLeft2) {
+                labelOverlayLeft2 = createMeasureLabelOverlay(coords[coords.length - 1], len);
+                leftMap.addOverlay(labelOverlayLeft2);
+              } else {
+                labelOverlayLeft2.setPosition(coords[coords.length - 1]);
+                labelOverlayLeft2.getElement().textContent = len;
+              }
+            }
+          });
+        });
+        drawInteractionRight.on('drawend', function (evt) {
+          const coords = evt.feature.getGeometry().getCoordinates();
+          showMeasureLine(coords);
+          clearDrawInteraction();
+          drawingMode = null;
+          updatePermalinkWithFeatures();
+        });
+        rightMap.addInteraction(drawInteractionRight);
+        drawInteraction = { left: drawInteractionLeft, right: drawInteractionRight };
+      }
+    });
+    drawMarkerBtn.addEventListener('click', function () {
+      drawingMode = 'marker';
+      clearAllMarkers();
+      clearDrawInteraction();
+      clearDrawnFeatures('main', map);
+      if (leftMap) clearDrawnFeatures('left', leftMap);
+      if (rightMap) clearDrawnFeatures('right', rightMap);
+      drawMenu.style.display = 'none';
+      enableMarkerClickHandler();
+    });
+
+    // --- Restore features from URL on load ---
+    function restoreFeaturesFromURL(params) {
+      restoringFromPermalink = true;
+      drawingMode = null;
+      // Marker
+      markerCoords = null;
+      if (params.markerLat && params.markerLon) {
+        const lat = parseFloat(params.markerLat);
+        const lon = parseFloat(params.markerLon);
+        if (!isNaN(lat) && !isNaN(lon)) {
+          markerCoords = [lon, lat];
+        }
+      }
+      // Line
+      lineCoords = null;
+      if (params.line) {
+        const coords = params.line.split(';').map(pair => pair.split(',').map(Number));
+        if (coords.length >= 2 && coords.every(pair => pair.length === 2 && !isNaN(pair[0]) && !isNaN(pair[1]))) {
+          lineCoords = coords.map(pair => fromLonLat([pair[0], pair[1]]));
+        }
+      }
+      // Polygon
+      polygonCoords = null;
+      if (params.polygon) {
+        const coords = params.polygon.split(';').map(pair => pair.split(',').map(Number));
+        if (coords.length >= 3 && coords.every(pair => pair.length === 2 && !isNaN(pair[0]) && !isNaN(pair[1]))) {
+          polygonCoords = coords.map(pair => fromLonLat([pair[0], pair[1]]));
+        }
+      }
+      // Measure line
+      measureCoords = null;
+      if (params.measure) {
+        const coords = params.measure.split(';').map(pair => pair.split(',').map(Number));
+        if (coords.length >= 2 && coords.every(pair => pair.length === 2 && !isNaN(pair[0]) && !isNaN(pair[1]))) {
+          measureCoords = coords.map(pair => fromLonLat([pair[0], pair[1]]));
+        }
+      }
+      showAllDrawables();
+      restoringFromPermalink = false;
+      permalinkInitialized = true;
+      updatePermalinkWithFeatures();
+    }
+
+    drawMenuToggle.addEventListener('click', function () {
+      const style = window.getComputedStyle(drawMenu);
+      if (style.display === 'none') {
+        drawMenu.style.display = 'block';
+      } else {
+        drawMenu.style.display = 'none';
+      }
+    });
+
+    // Remove features button logic (clear all drawn features and markers in all modes)
+    const removeFeaturesBtn = document.getElementById('remove-features-btn');
+    if (removeFeaturesBtn) {
+      removeFeaturesBtn.addEventListener('click', function () {
+        // Clear drawn features for all maps
+        clearDrawnFeatures('main', map);
+        if (leftMap) clearDrawnFeatures('left', leftMap);
+        if (rightMap) clearDrawnFeatures('right', rightMap);
+        clearMeasureLine('main', map);
+        if (leftMap) clearMeasureLine('left', leftMap);
+        if (rightMap) clearMeasureLine('right', rightMap);
+        // Remove all marker layers
+        if (clickMarkerLayer && map) map.removeLayer(clickMarkerLayer);
+        if (searchMarkerLayer && map) map.removeLayer(searchMarkerLayer);
+        if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
+        if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
+        if (leftSearchMarkerLayer && leftMap) leftMap.removeLayer(leftSearchMarkerLayer);
+        if (rightSearchMarkerLayer && rightMap) rightMap.removeLayer(rightSearchMarkerLayer);
+        clickMarkerLayer = null;
+        searchMarkerLayer = null;
+        leftClickMarkerLayer = null;
+        rightClickMarkerLayer = null;
+        leftSearchMarkerLayer = null;
+        rightSearchMarkerLayer = null;
+        markerCoords = null;
+        lineCoords = null;
+        polygonCoords = null;
+        measureCoords = null;
+        // Update URL
+        updatePermalinkWithFeatures();
+      });
+    }
+
+    // Helper to clear marker from all maps
+    function clearAllMarkers() {
+      if (clickMarkerLayer && map) map.removeLayer(clickMarkerLayer);
+      if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
+      if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
+      clickMarkerLayer = null;
+      leftClickMarkerLayer = null;
+      rightClickMarkerLayer = null;
+      markerCoords = null;
+    }
+
+    // Add CSS for measure label if not present
+    if (!document.getElementById('measure-label-style')) {
+      const style = document.createElement('style');
+      style.id = 'measure-label-style';
+      style.textContent = `.measure-label { pointer-events: none; }`;
+      document.head.appendChild(style);
+    }
+
     // Only allow marker placement when marker tool is active
     function handleMapClick(evt) {
       if (drawingMode === 'marker') {
@@ -856,57 +1216,28 @@ fetch(capsUrl)
       drawInteraction = null;
     }
 
-    // Helper to encode features in URL
-    let restoringFromPermalink = false;
-    let permalinkInitialized = false;
+    // Add after permalinkInitialized and before first use
     function updatePermalinkWithFeatures() {
       if (restoringFromPermalink || !permalinkInitialized) return;
-      // Get marker from lastClickCoords
       let markerStr = '';
-      if (lastClickCoords && lastClickCoords.length === 2) {
-        markerStr = `&markerLat=${lastClickCoords[1].toFixed(7)}&markerLon=${lastClickCoords[0].toFixed(7)}`;
+      if (markerCoords && markerCoords.length === 2) {
+        markerStr = `&markerLat=${markerCoords[1].toFixed(7)}&markerLon=${markerCoords[0].toFixed(7)}`;
       }
-      // Get line
       let lineStr = '';
-      let lineFeature = null;
-      if (!isSplit) {
-        if (drawnLineFeature.main) {
-          lineFeature = drawnLineFeature.main;
-        } else if (drawnLineLayer.main && drawnLineLayer.main.getSource().getFeatures().length > 0) {
-          lineFeature = drawnLineLayer.main.getSource().getFeatures()[0];
-        }
-      } else {
-        if (drawnLineFeature.left) {
-          lineFeature = drawnLineFeature.left;
-        } else if (drawnLineLayer.left && drawnLineLayer.left.getSource().getFeatures().length > 0) {
-          lineFeature = drawnLineLayer.left.getSource().getFeatures()[0];
-        }
-      }
-      if (lineFeature) {
-        const coords = lineFeature.getGeometry().getCoordinates().map(c => toLonLat(c).map(n => n.toFixed(7)));
+      if (lineCoords && lineCoords.length >= 2) {
+        const coords = lineCoords.map(c => toLonLat(c).map(n => n.toFixed(7)));
         lineStr = `&line=${coords.map(pair => pair.join(",")).join(';')}`;
       }
-      // Get polygon
       let polyStr = '';
-      let polyFeature = null;
-      if (!isSplit) {
-        if (drawnPolygonFeature.main) {
-          polyFeature = drawnPolygonFeature.main;
-        } else if (drawnPolygonLayer.main && drawnPolygonLayer.main.getSource().getFeatures().length > 0) {
-          polyFeature = drawnPolygonLayer.main.getSource().getFeatures()[0];
-        }
-      } else {
-        if (drawnPolygonFeature.left) {
-          polyFeature = drawnPolygonFeature.left;
-        } else if (drawnPolygonLayer.left && drawnPolygonLayer.left.getSource().getFeatures().length > 0) {
-          polyFeature = drawnPolygonLayer.left.getSource().getFeatures()[0];
-        }
-      }
-      if (polyFeature) {
-        const coords = polyFeature.getGeometry().getCoordinates()[0].map(c => toLonLat(c).map(n => n.toFixed(7)));
+      if (polygonCoords && polygonCoords.length >= 3) {
+        const coords = polygonCoords.map(c => toLonLat(c).map(n => n.toFixed(7)));
         polyStr = `&polygon=${coords.map(pair => pair.join(",")).join(';')}`;
       }
-      // Compose base params
+      let measureStr = '';
+      if (measureCoords && measureCoords.length >= 2) {
+        const coords = measureCoords.map(c => toLonLat(c).map(n => n.toFixed(7)));
+        measureStr = `&measure=${coords.map(pair => pair.join(",")).join(';')}`;
+      }
       const view = isSplit && leftMap ? leftMap.getView() : map.getView();
       const zoom = view.getZoom();
       const center = view.getCenter();
@@ -914,159 +1245,18 @@ fetch(capsUrl)
       if (isSplit) {
         params += `&split=1&leftLayer=${leftLayerId}&rightLayer=${rightLayerId}`;
       } else {
-        // Get current layer id robustly
         let layerId = map.getLayers().item(0).getSource().getLayer ? map.getLayers().item(0).getSource().getLayer() : hardcodedLayers[initialLayerIdx].id;
         params += `&layer=${layerId}`;
       }
-      params += markerStr + lineStr + polyStr;
+      params += markerStr + lineStr + polyStr + measureStr;
       window.history.replaceState({}, '', params);
     }
 
-    // --- Restore features from URL on load ---
-    function restoreFeaturesFromURL(params) {
-      restoringFromPermalink = true;
-      // Ensure no drawing tool is active after restoration
-      drawingMode = null;
-      // Marker
-      if (params.markerLat && params.markerLon) {
-        const lat = parseFloat(params.markerLat);
-        const lon = parseFloat(params.markerLon);
-        if (!isNaN(lat) && !isNaN(lon)) {
-          showClickMarker(lon, lat);
-        }
-      }
-      // Line
-      if (params.line) {
-        const coords = params.line.split(';').map(pair => pair.split(',').map(Number));
-        if (coords.length >= 2 && coords.every(pair => pair.length === 2 && !isNaN(pair[0]) && !isNaN(pair[1]))) {
-          const olCoords = coords.map(pair => fromLonLat([pair[0], pair[1]]));
-          // Add to main or left/right depending on mode
-          if (!isSplit) {
-            // Remove any previous line layer
-            if (drawnLineLayer.main && map) map.removeLayer(drawnLineLayer.main);
-            const vectorSource = new VectorSource();
-            const feature = new Feature({ geometry: new LineString(olCoords) });
-            feature.setStyle(new Style({ stroke: new Stroke({ color: 'blue', width: 3 }) }));
-            vectorSource.addFeature(feature);
-            drawnLineLayer.main = new VectorLayer({ source: vectorSource, zIndex: 102 });
-            map.addLayer(drawnLineLayer.main);
-            drawnLineFeature.main = feature;
-          } else {
-            // Left
-            if (drawnLineLayer.left && leftMap) leftMap.removeLayer(drawnLineLayer.left);
-            const vectorSourceLeft = new VectorSource();
-            const featureLeft = new Feature({ geometry: new LineString(olCoords) });
-            featureLeft.setStyle(new Style({ stroke: new Stroke({ color: 'blue', width: 3 }) }));
-            vectorSourceLeft.addFeature(featureLeft);
-            drawnLineLayer.left = new VectorLayer({ source: vectorSourceLeft, zIndex: 102 });
-            leftMap.addLayer(drawnLineLayer.left);
-            drawnLineFeature.left = featureLeft;
-            // Right
-            if (drawnLineLayer.right && rightMap) rightMap.removeLayer(drawnLineLayer.right);
-            const vectorSourceRight = new VectorSource();
-            const featureRight = new Feature({ geometry: new LineString(olCoords) });
-            featureRight.setStyle(new Style({ stroke: new Stroke({ color: 'blue', width: 3 }) }));
-            vectorSourceRight.addFeature(featureRight);
-            drawnLineLayer.right = new VectorLayer({ source: vectorSourceRight, zIndex: 102 });
-            rightMap.addLayer(drawnLineLayer.right);
-            drawnLineFeature.right = featureRight;
-          }
-        }
-      }
-      // Polygon
-      if (params.polygon) {
-        const coords = params.polygon.split(';').map(pair => pair.split(',').map(Number));
-        if (coords.length >= 3 && coords.every(pair => pair.length === 2 && !isNaN(pair[0]) && !isNaN(pair[1]))) {
-          const olCoords = coords.map(pair => fromLonLat([pair[0], pair[1]]));
-          // Add to main or left/right depending on mode
-          if (!isSplit) {
-            // Remove any previous polygon layer
-            if (drawnPolygonLayer.main && map) map.removeLayer(drawnPolygonLayer.main);
-            const vectorSource = new VectorSource();
-            const feature = new Feature({ geometry: new Polygon([olCoords]) });
-            feature.setStyle(new Style({ fill: new Fill({ color: 'rgba(0,200,255,0.5)' }), stroke: new Stroke({ color: 'blue', width: 2 }) }));
-            vectorSource.addFeature(feature);
-            drawnPolygonLayer.main = new VectorLayer({ source: vectorSource, zIndex: 103 });
-            map.addLayer(drawnPolygonLayer.main);
-            drawnPolygonFeature.main = feature;
-          } else {
-            // Left
-            if (drawnPolygonLayer.left && leftMap) leftMap.removeLayer(drawnPolygonLayer.left);
-            const vectorSourceLeft = new VectorSource();
-            const featureLeft = new Feature({ geometry: new Polygon([olCoords]) });
-            featureLeft.setStyle(new Style({ fill: new Fill({ color: 'rgba(0,200,255,0.5)' }), stroke: new Stroke({ color: 'blue', width: 2 }) }));
-            vectorSourceLeft.addFeature(featureLeft);
-            drawnPolygonLayer.left = new VectorLayer({ source: vectorSourceLeft, zIndex: 103 });
-            leftMap.addLayer(drawnPolygonLayer.left);
-            drawnPolygonFeature.left = featureLeft;
-            // Right
-            if (drawnPolygonLayer.right && rightMap) rightMap.removeLayer(drawnPolygonLayer.right);
-            const vectorSourceRight = new VectorSource();
-            const featureRight = new Feature({ geometry: new Polygon([olCoords]) });
-            featureRight.setStyle(new Style({ fill: new Fill({ color: 'rgba(0,200,255,0.5)' }), stroke: new Stroke({ color: 'blue', width: 2 }) }));
-            vectorSourceRight.addFeature(featureRight);
-            drawnPolygonLayer.right = new VectorLayer({ source: vectorSourceRight, zIndex: 103 });
-            rightMap.addLayer(drawnPolygonLayer.right);
-            drawnPolygonFeature.right = featureRight;
-          }
-        }
-      }
-      restoringFromPermalink = false;
-      // Now allow URL updates
-      permalinkInitialized = true;
-      // Ensure URL is correct after restoration
-      updatePermalinkWithFeatures();
-    }
-
-    // --- After map is created ---
-    // Restore features from URL
-    restoreFeaturesFromURL(params);
-
-    drawMenuToggle.addEventListener('click', function () {
-      const style = window.getComputedStyle(drawMenu);
-      if (style.display === 'none') {
-        drawMenu.style.display = 'block';
-      } else {
-        drawMenu.style.display = 'none';
-      }
-    });
-
-    // Remove features button logic (clear all drawn features and markers in all modes)
-    const removeFeaturesBtn = document.getElementById('remove-features-btn');
-    if (removeFeaturesBtn) {
-      removeFeaturesBtn.addEventListener('click', function () {
-        // Clear drawn features for all maps
-        clearDrawnFeatures('main', map);
-        if (leftMap) clearDrawnFeatures('left', leftMap);
-        if (rightMap) clearDrawnFeatures('right', rightMap);
-        // Remove all marker layers
-        if (clickMarkerLayer && map) map.removeLayer(clickMarkerLayer);
-        if (searchMarkerLayer && map) map.removeLayer(searchMarkerLayer);
-        if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
-        if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
-        if (leftSearchMarkerLayer && leftMap) leftMap.removeLayer(leftSearchMarkerLayer);
-        if (rightSearchMarkerLayer && rightMap) rightMap.removeLayer(rightSearchMarkerLayer);
-        clickMarkerLayer = null;
-        searchMarkerLayer = null;
-        leftClickMarkerLayer = null;
-        rightClickMarkerLayer = null;
-        leftSearchMarkerLayer = null;
-        rightSearchMarkerLayer = null;
-        lastClickCoords = null;
-        lastSearchCoords = null;
-        // Update URL
-        updatePermalinkWithFeatures();
-      });
-    }
-
-    // Helper to clear marker from all maps
-    function clearAllMarkers() {
-      if (clickMarkerLayer && map) map.removeLayer(clickMarkerLayer);
-      if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
-      if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
-      clickMarkerLayer = null;
-      leftClickMarkerLayer = null;
-      rightClickMarkerLayer = null;
-      lastClickCoords = null;
+    // Replace all feature copying/clearing logic with robust show* logic
+    function showAllDrawables() {
+      showClickMarker(markerCoords ? markerCoords[0] : null, markerCoords ? markerCoords[1] : null);
+      showLine(lineCoords);
+      showPolygon(polygonCoords);
+      showMeasureLine(measureCoords);
     }
   });
