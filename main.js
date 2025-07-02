@@ -144,13 +144,6 @@ fetch(capsUrl)
     // Set initial left/right layer ids for split mode
     let leftLayerId = initialLeftLayerId;
     let rightLayerId = initialRightLayerId;
-    // If initialIsSplit, activate split screen after map is ready
-    if (initialIsSplit) {
-      setTimeout(() => {
-        activateSplitScreen();
-        splitToggle.textContent = 'Single screen';
-      }, 0);
-    }
 
     // --- Layer selector dropdown creation ---
     function createLayerSelectorDropdown(initialId, onChange) {
@@ -255,6 +248,7 @@ fetch(capsUrl)
       viewA.on('change:rotation', updateB);
     }
 
+    // --- Original split screen functions ---
     function activateSplitScreen() {
       isSplit = true;
       mainMapDiv.style.display = 'none';
@@ -304,10 +298,7 @@ fetch(capsUrl)
       });
       document.getElementById('map-left').appendChild(leftLayerSelectorDiv);
       document.getElementById('map-right').appendChild(rightLayerSelectorDiv);
-      syncViews(leftMap, rightMap);
-      syncViews(rightMap, leftMap);
     }
-
     function deactivateSplitScreen() {
       isSplit = false;
       splitMapsContainer.style.display = 'none';
@@ -321,6 +312,61 @@ fetch(capsUrl)
       rightMap = null;
       leftLayerSelectorDiv = null;
       rightLayerSelectorDiv = null;
+    }
+    // --- Refactored split screen logic ---
+    // Save original functions
+    const _activateSplitScreen = activateSplitScreen;
+    const _deactivateSplitScreen = deactivateSplitScreen;
+    activateSplitScreen = function() {
+      _activateSplitScreen();
+      if (leftMap && rightMap) {
+        syncViews(leftMap, rightMap);
+        syncViews(rightMap, leftMap);
+      }
+      if (lastSearchCoords) {
+        if (searchMarkerLayer) map.removeLayer(searchMarkerLayer);
+        leftSearchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
+        rightSearchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
+        if (leftMap) leftMap.addLayer(leftSearchMarkerLayer);
+        if (rightMap) rightMap.addLayer(rightSearchMarkerLayer);
+      }
+      if (lastClickCoords) {
+        if (clickMarkerLayer) map.removeLayer(clickMarkerLayer);
+        leftClickMarkerLayer = createClickMarkerLayer(lastClickCoords[0], lastClickCoords[1]);
+        rightClickMarkerLayer = createClickMarkerLayer(lastClickCoords[0], lastClickCoords[1]);
+        if (leftMap) leftMap.addLayer(leftClickMarkerLayer);
+        if (rightMap) rightMap.addLayer(rightClickMarkerLayer);
+      }
+      if (leftMap) leftMap.on('singleclick', handleMapClick);
+      if (rightMap) rightMap.on('singleclick', handleMapClick);
+    };
+    deactivateSplitScreen = function() {
+      if (leftMap) leftMap.un('singleclick', handleMapClick);
+      if (rightMap) rightMap.un('singleclick', handleMapClick);
+      if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
+      if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
+      leftClickMarkerLayer = null;
+      rightClickMarkerLayer = null;
+      if (leftSearchMarkerLayer && leftMap) leftMap.removeLayer(leftSearchMarkerLayer);
+      if (rightSearchMarkerLayer && rightMap) rightMap.removeLayer(rightSearchMarkerLayer);
+      leftSearchMarkerLayer = null;
+      rightSearchMarkerLayer = null;
+      _deactivateSplitScreen();
+      if (lastClickCoords) {
+        clickMarkerLayer = createClickMarkerLayer(lastClickCoords[0], lastClickCoords[1]);
+        map.addLayer(clickMarkerLayer);
+      }
+      if (lastSearchCoords) {
+        searchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
+        map.addLayer(searchMarkerLayer);
+      }
+    };
+    // If initialIsSplit, activate split screen after map is ready
+    if (initialIsSplit) {
+      setTimeout(() => {
+        activateSplitScreen();
+        splitToggle.textContent = 'Single screen';
+      }, 0);
     }
 
     splitToggle.addEventListener('click', function () {
@@ -403,36 +449,6 @@ fetch(capsUrl)
       }
     }
 
-    // When activating split screen, add marker to both maps if marker exists
-    const originalActivateSplitScreen = activateSplitScreen;
-    activateSplitScreen = function() {
-      originalActivateSplitScreen();
-      if (lastSearchCoords) {
-        // Remove from main map if present
-        if (searchMarkerLayer) map.removeLayer(searchMarkerLayer);
-        // Add to split maps
-        leftSearchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
-        rightSearchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
-        if (leftMap) leftMap.addLayer(leftSearchMarkerLayer);
-        if (rightMap) rightMap.addLayer(rightSearchMarkerLayer);
-      }
-    };
-
-    // When deactivating split screen, add marker back to main map if marker exists
-    const originalDeactivateSplitScreen = deactivateSplitScreen;
-    deactivateSplitScreen = function() {
-      // Remove from split maps if present
-      if (leftSearchMarkerLayer && leftMap) leftMap.removeLayer(leftSearchMarkerLayer);
-      if (rightSearchMarkerLayer && rightMap) rightMap.removeLayer(rightSearchMarkerLayer);
-      leftSearchMarkerLayer = null;
-      rightSearchMarkerLayer = null;
-      originalDeactivateSplitScreen();
-      if (lastSearchCoords) {
-        searchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
-        map.addLayer(searchMarkerLayer);
-      }
-    };
-
     // Google Places Autocomplete logic
     if (window.google && window.google.maps && window.google.maps.places) {
       const input = document.getElementById('search-bar');
@@ -468,4 +484,51 @@ fetch(capsUrl)
       // If Google API is not loaded, show a warning in the console
       console.warn('Google Maps Places API not loaded. Search bar will not work.');
     }
+
+    // --- Click marker logic ---
+    let clickMarkerLayer = null;
+    let leftClickMarkerLayer = null;
+    let rightClickMarkerLayer = null;
+    let lastClickCoords = null; // [lon, lat]
+
+    function createClickMarkerLayer(lon, lat) {
+      const marker = new Feature({
+        geometry: new Point(fromLonLat([lon, lat]))
+      });
+      marker.setStyle(new Style({
+        image: new Icon({
+          anchor: [0.5, 1],
+          src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="cyan" stroke="black" stroke-width="2"/></svg>',
+          scale: 1
+        })
+      }));
+      const vectorSource = new VectorSource({ features: [marker] });
+      return new VectorLayer({ source: vectorSource, zIndex: 101 });
+    }
+
+    function showClickMarker(lon, lat) {
+      lastClickCoords = [lon, lat];
+      // Remove previous marker layer if exists
+      if (clickMarkerLayer) map.removeLayer(clickMarkerLayer);
+      if (leftClickMarkerLayer && leftMap) leftMap.removeLayer(leftClickMarkerLayer);
+      if (rightClickMarkerLayer && rightMap) rightMap.removeLayer(rightClickMarkerLayer);
+      // Add to main map if not split
+      if (!isSplit) {
+        clickMarkerLayer = createClickMarkerLayer(lon, lat);
+        map.addLayer(clickMarkerLayer);
+      } else {
+        // Add to both split maps
+        leftClickMarkerLayer = createClickMarkerLayer(lon, lat);
+        rightClickMarkerLayer = createClickMarkerLayer(lon, lat);
+        if (leftMap) leftMap.addLayer(leftClickMarkerLayer);
+        if (rightMap) rightMap.addLayer(rightClickMarkerLayer);
+      }
+    }
+
+    // Add click event listeners
+    function handleMapClick(evt) {
+      const coord = toLonLat(evt.coordinate);
+      showClickMarker(coord[0], coord[1]);
+    }
+    map.on('singleclick', handleMapClick);
   });
