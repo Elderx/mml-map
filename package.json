@@ -1,0 +1,13 @@
+{
+  "name": "avoin-wmts-openlayers",
+  "dependencies": {
+    "ol": "10.5.0"
+  },
+  "devDependencies": {
+    "vite": "^6.1.6"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build"
+  }
+}
