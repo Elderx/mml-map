@@ -5,6 +5,7 @@ import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS.js';
 import WMTSCapabilities from 'ol/format/WMTSCapabilities.js';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import Control from 'ol/control/Control.js';
+import OSM from 'ol/source/OSM.js';
 
 const apiKey = '977cd66e-8512-460a-83d3-cb405325c3ff',
   epsg = 'EPSG:3857',
@@ -12,10 +13,11 @@ const apiKey = '977cd66e-8512-460a-83d3-cb405325c3ff',
   capsUrl = `https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/WMTSCapabilities.xml?api-key=${apiKey}`;
 
 const hardcodedLayers = [
-  { id: 'taustakartta', name: 'Taustakartta' },
-  { id: 'maastokartta', name: 'Maastokartta' },
-  { id: 'selkokartta', name: 'Selkokartta' },
-  { id: 'ortokuva', name: 'Ortokuva' }
+  { id: 'taustakartta', name: 'Taustakartta', type: 'wmts' },
+  { id: 'maastokartta', name: 'Maastokartta', type: 'wmts' },
+  { id: 'selkokartta', name: 'Selkokartta', type: 'wmts' },
+  { id: 'ortokuva', name: 'Ortokuva', type: 'wmts' },
+  { id: 'osm', name: 'OpenStreetMap', type: 'osm' }
 ];
 
 const parser = new WMTSCapabilities();
@@ -29,6 +31,13 @@ fetch(capsUrl)
     const result = parser.read(text);
 
     function createTileLayer(layerId, onError) {
+      const layerInfo = hardcodedLayers.find(l => l.id === layerId);
+      if (layerInfo && layerInfo.type === 'osm') {
+        return new TileLayer({
+          opacity: 1,
+          source: new OSM()
+        });
+      }
       const options = optionsFromCapabilities(result, {
         layer: layerId,
         matrixSet: tileMatrixSet,
