@@ -80,12 +80,17 @@ fetch(capsUrl)
     }
 
     // Helper to update the URL
-    function updatePermalink(center, zoom, layerId) {
+    function updatePermalink(center, zoom, layerId, isSplitMode, leftLayerId, rightLayerId) {
       const [lon, lat] = toLonLat(center);
       const latStr = lat.toFixed(7);
       const lonStr = lon.toFixed(7);
       const z = Math.round(zoom * 1000) / 1000;
-      const params = `?lat=${latStr}&lon=${lonStr}&z=${z}&layer=${layerId}`;
+      let params = `?lat=${latStr}&lon=${lonStr}&z=${z}`;
+      if (isSplitMode) {
+        params += `&split=1&leftLayer=${leftLayerId}&rightLayer=${rightLayerId}`;
+      } else {
+        params += `&layer=${layerId}`;
+      }
       window.history.replaceState({}, '', params);
     }
 
@@ -99,15 +104,28 @@ fetch(capsUrl)
     let initialLayerIdx = 1; // default to maastokartta
     let initialZoom = 5;
     let initialCenter = fromLonLat([24.94, 60.19]); // fallback only if missing
-    if (params.lat && params.lon && params.z && params.layer) {
-      const idx = hardcodedLayers.findIndex(l => l.id === params.layer);
-      if (idx !== -1) initialLayerIdx = idx;
+    let initialIsSplit = false;
+    let initialLeftLayerId = hardcodedLayers[1].id;
+    let initialRightLayerId = hardcodedLayers[0].id;
+    if (params.lat && params.lon && params.z) {
       initialZoom = parseFloat(params.z);
       const lat = parseFloat(params.lat);
       const lon = parseFloat(params.lon);
       if (!isNaN(lat) && !isNaN(lon)) {
         initialCenter = fromLonLat([lon, lat]);
       }
+    }
+    if (params.split === '1') {
+      initialIsSplit = true;
+      if (params.leftLayer && hardcodedLayers.find(l => l.id === params.leftLayer)) {
+        initialLeftLayerId = params.leftLayer;
+      }
+      if (params.rightLayer && hardcodedLayers.find(l => l.id === params.rightLayer)) {
+        initialRightLayerId = params.rightLayer;
+      }
+    } else if (params.layer) {
+      const idx = hardcodedLayers.findIndex(l => l.id === params.layer);
+      if (idx !== -1) initialLayerIdx = idx;
     }
 
     // Create the initial map with the correct layer and view
@@ -123,6 +141,16 @@ fetch(capsUrl)
       }),
       controls: [] // We'll add controls manually
     });
+    // Set initial left/right layer ids for split mode
+    let leftLayerId = initialLeftLayerId;
+    let rightLayerId = initialRightLayerId;
+    // If initialIsSplit, activate split screen after map is ready
+    if (initialIsSplit) {
+      setTimeout(() => {
+        activateSplitScreen();
+        splitToggle.textContent = 'Single screen';
+      }, 0);
+    }
 
     // --- Layer selector dropdown creation ---
     function createLayerSelectorDropdown(initialId, onChange) {
@@ -179,6 +207,9 @@ fetch(capsUrl)
       singleLayerSelectorDiv = createLayerSelectorDropdown(hardcodedLayers[initialLayerIdx].id, function (newLayerId) {
         const newLayer = createTileLayer(newLayerId);
         map.getLayers().setAt(0, newLayer);
+        // Update URL on layer change in single mode
+        const view = map.getView();
+        updatePermalink(view.getCenter(), view.getZoom(), newLayerId, false);
       });
       mainMapDiv.appendChild(singleLayerSelectorDiv);
       showSingleLayerSelector(true);
@@ -188,8 +219,6 @@ fetch(capsUrl)
     // --- Split screen logic ---
     let leftMap = null;
     let rightMap = null;
-    let leftLayerId = hardcodedLayers[1].id;
-    let rightLayerId = hardcodedLayers[0].id;
     let isSplit = false;
     let leftLayerSelectorDiv = null;
     let rightLayerSelectorDiv = null;
@@ -256,6 +285,9 @@ fetch(capsUrl)
         const newLayer = createTileLayer(newLayerId);
         leftMap.getLayers().setAt(0, newLayer);
         leftLayerId = newLayerId;
+        // Update URL on left layer change in split mode
+        const view = leftMap.getView();
+        updatePermalink(view.getCenter(), view.getZoom(), null, true, leftLayerId, rightLayerId);
       });
       // Move left selector to top left
       leftLayerSelectorDiv.style.left = '10px';
@@ -266,6 +298,9 @@ fetch(capsUrl)
         const newLayer = createTileLayer(newLayerId);
         rightMap.getLayers().setAt(0, newLayer);
         rightLayerId = newLayerId;
+        // Update URL on right layer change in split mode
+        const view = rightMap.getView();
+        updatePermalink(view.getCenter(), view.getZoom(), null, true, leftLayerId, rightLayerId);
       });
       document.getElementById('map-left').appendChild(leftLayerSelectorDiv);
       document.getElementById('map-right').appendChild(rightLayerSelectorDiv);
@@ -292,9 +327,16 @@ fetch(capsUrl)
       if (!isSplit) {
         activateSplitScreen();
         splitToggle.textContent = 'Single screen';
+        // Update URL on entering split mode
+        const view = leftMap ? leftMap.getView() : map.getView();
+        updatePermalink(view.getCenter(), view.getZoom(), null, true, leftLayerId, rightLayerId);
       } else {
         deactivateSplitScreen();
         splitToggle.textContent = 'Split screen';
+        // Update URL on exiting split mode
+        const view = map.getView();
+        const layerId = map.getLayers().item(0).getSource().getLayer ? map.getLayers().item(0).getSource().getLayer() : hardcodedLayers[initialLayerIdx].id;
+        updatePermalink(view.getCenter(), view.getZoom(), layerId, false);
       }
     });
 
@@ -312,7 +354,7 @@ fetch(capsUrl)
       // Actually, let's track the active button
       const activeBtn = document.querySelector('.layer-buttons-control .active-layer-btn');
       if (activeBtn) layerId = activeBtn.getAttribute('data-layer-id');
-      updatePermalink(center, zoom, layerId);
+      updatePermalink(center, zoom, layerId, isSplit, leftLayerId, rightLayerId);
     });
 
     // Add default controls and our custom control
