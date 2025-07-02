@@ -257,6 +257,11 @@ fetch(capsUrl)
         leftMap.getLayers().setAt(0, newLayer);
         leftLayerId = newLayerId;
       });
+      // Move left selector to top left
+      leftLayerSelectorDiv.style.left = '10px';
+      leftLayerSelectorDiv.style.right = '';
+      leftLayerSelectorDiv.style.top = '10px';
+      leftLayerSelectorDiv.style.position = 'absolute';
       rightLayerSelectorDiv = createLayerSelectorDropdown(rightLayerId, function (newLayerId) {
         const newLayer = createTileLayer(newLayerId);
         rightMap.getLayers().setAt(0, newLayer);
@@ -318,11 +323,11 @@ fetch(capsUrl)
     // --- After map is created ---
     // Marker logic
     let searchMarkerLayer = null;
-    function showSearchMarker(lon, lat) {
-      // Remove previous marker layer if exists
-      if (searchMarkerLayer) {
-        map.removeLayer(searchMarkerLayer);
-      }
+    let leftSearchMarkerLayer = null;
+    let rightSearchMarkerLayer = null;
+    let lastSearchCoords = null; // [lon, lat]
+
+    function createSearchMarkerLayer(lon, lat) {
       const marker = new Feature({
         geometry: new Point(fromLonLat([lon, lat]))
       });
@@ -334,9 +339,58 @@ fetch(capsUrl)
         })
       }));
       const vectorSource = new VectorSource({ features: [marker] });
-      searchMarkerLayer = new VectorLayer({ source: vectorSource, zIndex: 100 });
-      map.addLayer(searchMarkerLayer);
+      return new VectorLayer({ source: vectorSource, zIndex: 100 });
     }
+
+    function showSearchMarker(lon, lat) {
+      lastSearchCoords = [lon, lat];
+      // Remove previous marker layer if exists
+      if (searchMarkerLayer) map.removeLayer(searchMarkerLayer);
+      if (leftSearchMarkerLayer && leftMap) leftMap.removeLayer(leftSearchMarkerLayer);
+      if (rightSearchMarkerLayer && rightMap) rightMap.removeLayer(rightSearchMarkerLayer);
+      // Add to main map if not split
+      if (!isSplit) {
+        searchMarkerLayer = createSearchMarkerLayer(lon, lat);
+        map.addLayer(searchMarkerLayer);
+      } else {
+        // Add to both split maps
+        leftSearchMarkerLayer = createSearchMarkerLayer(lon, lat);
+        rightSearchMarkerLayer = createSearchMarkerLayer(lon, lat);
+        if (leftMap) leftMap.addLayer(leftSearchMarkerLayer);
+        if (rightMap) rightMap.addLayer(rightSearchMarkerLayer);
+      }
+    }
+
+    // When activating split screen, add marker to both maps if marker exists
+    const originalActivateSplitScreen = activateSplitScreen;
+    activateSplitScreen = function() {
+      originalActivateSplitScreen();
+      if (lastSearchCoords) {
+        // Remove from main map if present
+        if (searchMarkerLayer) map.removeLayer(searchMarkerLayer);
+        // Add to split maps
+        leftSearchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
+        rightSearchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
+        if (leftMap) leftMap.addLayer(leftSearchMarkerLayer);
+        if (rightMap) rightMap.addLayer(rightSearchMarkerLayer);
+      }
+    };
+
+    // When deactivating split screen, add marker back to main map if marker exists
+    const originalDeactivateSplitScreen = deactivateSplitScreen;
+    deactivateSplitScreen = function() {
+      // Remove from split maps if present
+      if (leftSearchMarkerLayer && leftMap) leftMap.removeLayer(leftSearchMarkerLayer);
+      if (rightSearchMarkerLayer && rightMap) rightMap.removeLayer(rightSearchMarkerLayer);
+      leftSearchMarkerLayer = null;
+      rightSearchMarkerLayer = null;
+      originalDeactivateSplitScreen();
+      if (lastSearchCoords) {
+        searchMarkerLayer = createSearchMarkerLayer(lastSearchCoords[0], lastSearchCoords[1]);
+        map.addLayer(searchMarkerLayer);
+      }
+    };
+
     // Google Places Autocomplete logic
     if (window.google && window.google.maps && window.google.maps.places) {
       const input = document.getElementById('search-bar');
