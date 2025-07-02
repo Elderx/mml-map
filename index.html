@@ -8,7 +8,7 @@
         position: absolute; top: 0; right: 0; bottom: 0; left: 0;
       }
     </style>
-    <script type="module" crossorigin src="/mml-map/assets/index-DkcvGIsw.js"></script>
+    <script type="module" crossorigin src="/mml-map/assets/index-CZpoWN4M.js"></script>
     <link rel="stylesheet" crossorigin href="/mml-map/assets/index-BtPuoxOl.css">
   </head>
   <body>
@@ -26,6 +26,16 @@
     <div id="split-maps-container" style="display:none;width:100vw;height:100vh;position:absolute;top:0;left:0;z-index:2;">
       <div id="map-left" style="width:50vw;height:100vh;float:left;position:relative;"></div>
       <div id="map-right" style="width:50vw;height:100vh;float:left;position:relative;"></div>
+    </div>
+    <!-- Drawing menu (bottom right) -->
+    <div id="draw-menu-container" style="position:absolute;bottom:20px;right:20px;z-index:20;">
+      <button id="draw-menu-toggle" style="padding:8px 16px;font-size:1em;border-radius:8px 8px 0 0;border:none;background:#1976d2;color:white;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.13);">Draw</button>
+      <div id="draw-menu" style="display:none;background:white;border-radius:0 0 8px 8px;box-shadow:0 2px 8px rgba(0,0,0,0.13);padding:10px 12px 8px 12px;min-width:120px;">
+        <div style="margin-bottom:8px;font-weight:bold;">Draw:</div>
+        <button id="draw-marker-btn" style="width:100%;margin-bottom:6px;padding:8px;border-radius:6px;border:1px solid #1976d2;background:#e3f2fd;color:#1976d2;cursor:pointer;">Marker</button>
+        <button id="draw-line-btn" style="width:100%;margin-bottom:6px;padding:8px;border-radius:6px;border:1px solid #1976d2;background:#e3f2fd;color:#1976d2;cursor:pointer;">Line</button>
+        <button id="draw-polygon-btn" style="width:100%;padding:8px;border-radius:6px;border:1px solid #1976d2;background:#e3f2fd;color:#1976d2;cursor:pointer;">Polygon</button>
+      </div>
     </div>
     <!-- Google Places API (replace YOUR_API_KEY with your actual key) -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5vLn14E_RE3yAoVr1T2LYSQh69dw7Zt0&libraries=places"></script>
