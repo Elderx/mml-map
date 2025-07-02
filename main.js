@@ -448,12 +448,20 @@ fetch(capsUrl)
           }
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
-          // Pan and zoom the main map
+          // Always update all maps to the searched location
           if (map && map.getView) {
             map.getView().setCenter(fromLonLat([lng, lat]));
             map.getView().setZoom(14);
-            showSearchMarker(lng, lat);
           }
+          if (leftMap && leftMap.getView) {
+            leftMap.getView().setCenter(fromLonLat([lng, lat]));
+            leftMap.getView().setZoom(14);
+          }
+          if (rightMap && rightMap.getView) {
+            rightMap.getView().setCenter(fromLonLat([lng, lat]));
+            rightMap.getView().setZoom(14);
+          }
+          showSearchMarker(lng, lat);
         });
       }
     } else {
