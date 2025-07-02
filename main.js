@@ -28,6 +28,11 @@ fetch(capsUrl)
     return response.text();
   })
   .then(function (text) {
+    // DOM elements (define first!)
+    const mainMapDiv = document.getElementById('map');
+    const splitToggle = document.getElementById('split-toggle');
+    const splitMapsContainer = document.getElementById('split-maps-container');
+
     const result = parser.read(text);
 
     function createTileLayer(layerId, onError) {
@@ -113,87 +118,174 @@ fetch(capsUrl)
       controls: [] // We'll add controls manually
     });
 
-    // Custom Layer Switcher Buttons Control
-    class LayerButtonsControl extends Control {
-      constructor(opt_options) {
-        const options = opt_options || {};
-        const element = document.createElement('div');
-        element.className = 'ol-unselectable ol-control layer-buttons-control';
-        element.style.display = 'flex';
-        element.style.flexDirection = 'column';
-        element.style.gap = '8px';
-        element.style.background = 'rgba(255,255,255,0.97)';
-        element.style.padding = '10px 12px';
-        element.style.borderRadius = '10px';
-        element.style.boxShadow = '0 2px 12px rgba(0,0,0,0.13)';
-        element.style.margin = '10px';
-        element.style.position = 'absolute';
-        element.style.top = '10px';
-        element.style.right = '10px';
-        element.style.left = 'auto';
-        element.style.bottom = 'auto';
-        element.style.alignItems = 'stretch';
-        element.style.zIndex = 2;
-        element.style.maxWidth = '220px';
-        element.style.minWidth = '120px';
-        element.style.boxSizing = 'border-box';
-        element.style.overflow = 'hidden';
+    // --- Layer selector dropdown creation ---
+    function createLayerSelectorDropdown(initialId, onChange) {
+      const div = document.createElement('div');
+      div.style.position = 'absolute';
+      div.style.top = '10px';
+      div.style.right = '10px';
+      div.style.zIndex = 10;
+      div.style.background = 'rgba(255,255,255,0.97)';
+      div.style.padding = '10px 12px';
+      div.style.borderRadius = '10px';
+      div.style.boxShadow = '0 2px 12px rgba(0,0,0,0.13)';
+      div.style.maxWidth = '220px';
+      div.style.minWidth = '120px';
+      div.style.boxSizing = 'border-box';
+      div.style.overflow = 'hidden';
 
-        hardcodedLayers.forEach((layer, idx) => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.innerText = layer.name;
-          btn.style.fontSize = '1em';
-          btn.style.padding = '10px 10px';
-          btn.style.border = 'none';
-          btn.style.borderRadius = '6px';
-          btn.style.background = idx === initialLayerIdx ? '#1976d2' : '#e0e0e0'; // selected
-          btn.style.color = idx === initialLayerIdx ? 'white' : '#333';
-          btn.style.cursor = 'pointer';
-          btn.style.transition = 'background 0.2s, color 0.2s';
-          btn.style.outline = 'none';
-          btn.style.margin = '0';
-          btn.style.textAlign = 'left';
-          btn.style.whiteSpace = 'nowrap';
-          btn.style.overflow = 'hidden';
-          btn.style.textOverflow = 'ellipsis';
-          btn.style.width = '100%';
-          btn.setAttribute('data-layer-id', layer.id);
-          if (idx === initialLayerIdx) btn.classList.add('active-layer-btn');
+      const select = document.createElement('select');
+      select.style.width = '100%';
+      select.style.fontSize = '1em';
+      select.style.padding = '8px';
+      select.style.borderRadius = '6px';
+      select.style.border = '1px solid #ccc';
+      select.style.margin = '0';
+      select.style.background = 'white';
+      select.style.cursor = 'pointer';
+      select.style.outline = 'none';
+      select.style.textOverflow = 'ellipsis';
+      select.style.whiteSpace = 'nowrap';
 
-          btn.addEventListener('click', function () {
-            // Remove active style from all buttons
-            Array.from(element.children).forEach(child => {
-              child.style.background = '#e0e0e0';
-              child.style.color = '#333';
-              child.classList.remove('active-layer-btn');
-            });
-            // Set active style
-            btn.style.background = '#1976d2';
-            btn.style.color = 'white';
-            btn.classList.add('active-layer-btn');
-            // Switch layer
-            const selectedLayer = hardcodedLayers.find(l => l.id === layer.id);
-            const newLayer = createTileLayer(layer.id, function() {
-              alert('Failed to load tiles for layer: ' + selectedLayer.name);
-            });
-            map.getLayers().setAt(0, newLayer);
-            // Update URL using current map view center and zoom
-            const view = map.getView();
-            const center = view.getCenter();
-            const zoom = view.getZoom();
-            updatePermalink(center, zoom, layer.id);
-          });
+      hardcodedLayers.forEach(layer => {
+        const option = document.createElement('option');
+        option.value = layer.id;
+        option.text = layer.name;
+        select.appendChild(option);
+      });
+      select.value = initialId;
+      div.appendChild(select);
 
-          element.appendChild(btn);
-        });
+      select.addEventListener('change', function () {
+        onChange(this.value);
+      });
 
-        super({
-          element: element,
-          target: options.target
-        });
-      }
+      return div;
     }
+
+    // --- Single map layer selector ---
+    let singleLayerSelectorDiv = null;
+    function showSingleLayerSelector(show) {
+      if (singleLayerSelectorDiv) singleLayerSelectorDiv.style.display = show ? 'block' : 'none';
+    }
+    function addSingleLayerSelectorToMap() {
+      if (singleLayerSelectorDiv) singleLayerSelectorDiv.remove();
+      singleLayerSelectorDiv = createLayerSelectorDropdown(hardcodedLayers[initialLayerIdx].id, function (newLayerId) {
+        const newLayer = createTileLayer(newLayerId);
+        map.getLayers().setAt(0, newLayer);
+      });
+      mainMapDiv.appendChild(singleLayerSelectorDiv);
+      showSingleLayerSelector(true);
+    }
+    addSingleLayerSelectorToMap();
+
+    // --- Split screen logic ---
+    let leftMap = null;
+    let rightMap = null;
+    let leftLayerId = hardcodedLayers[1].id;
+    let rightLayerId = hardcodedLayers[0].id;
+    let isSplit = false;
+    let leftLayerSelectorDiv = null;
+    let rightLayerSelectorDiv = null;
+
+    // --- Map synchronization for split screen ---
+    function syncViews(mapA, mapB) {
+      let syncing = false;
+      const viewA = mapA.getView();
+      const viewB = mapB.getView();
+      function updateB() {
+        if (syncing) return;
+        syncing = true;
+        const centerA = viewA.getCenter();
+        const zoomA = viewA.getZoom();
+        const rotationA = viewA.getRotation();
+        const centerB = viewB.getCenter();
+        const zoomB = viewB.getZoom();
+        const rotationB = viewB.getRotation();
+        // Only update if different
+        if (
+          centerA[0] !== centerB[0] ||
+          centerA[1] !== centerB[1] ||
+          zoomA !== zoomB ||
+          rotationA !== rotationB
+        ) {
+          viewB.setCenter(centerA.slice());
+          viewB.setZoom(zoomA);
+          viewB.setRotation(rotationA);
+        }
+        syncing = false;
+      }
+      viewA.on('change:center', updateB);
+      viewA.on('change:resolution', updateB);
+      viewA.on('change:rotation', updateB);
+    }
+
+    function activateSplitScreen() {
+      isSplit = true;
+      mainMapDiv.style.display = 'none';
+      splitMapsContainer.style.display = 'block';
+      showSingleLayerSelector(false);
+      if (leftMap) leftMap.setTarget(null);
+      if (rightMap) rightMap.setTarget(null);
+      if (leftLayerSelectorDiv) leftLayerSelectorDiv.remove();
+      if (rightLayerSelectorDiv) rightLayerSelectorDiv.remove();
+      const mainView = map.getView();
+      const center = mainView.getCenter();
+      const zoom = mainView.getZoom();
+      const rotation = mainView.getRotation();
+      leftMap = new Map({
+        target: 'map-left',
+        layers: [createTileLayer(leftLayerId)],
+        view: new View({ center: center.slice(), zoom, rotation }),
+        controls: []
+      });
+      rightMap = new Map({
+        target: 'map-right',
+        layers: [createTileLayer(rightLayerId)],
+        view: new View({ center: center.slice(), zoom, rotation }),
+        controls: []
+      });
+      // Add selectors as DOM elements
+      leftLayerSelectorDiv = createLayerSelectorDropdown(leftLayerId, function (newLayerId) {
+        const newLayer = createTileLayer(newLayerId);
+        leftMap.getLayers().setAt(0, newLayer);
+        leftLayerId = newLayerId;
+      });
+      rightLayerSelectorDiv = createLayerSelectorDropdown(rightLayerId, function (newLayerId) {
+        const newLayer = createTileLayer(newLayerId);
+        rightMap.getLayers().setAt(0, newLayer);
+        rightLayerId = newLayerId;
+      });
+      document.getElementById('map-left').appendChild(leftLayerSelectorDiv);
+      document.getElementById('map-right').appendChild(rightLayerSelectorDiv);
+      syncViews(leftMap, rightMap);
+      syncViews(rightMap, leftMap);
+    }
+
+    function deactivateSplitScreen() {
+      isSplit = false;
+      splitMapsContainer.style.display = 'none';
+      mainMapDiv.style.display = 'block';
+      showSingleLayerSelector(true);
+      if (leftMap) leftMap.setTarget(null);
+      if (rightMap) rightMap.setTarget(null);
+      if (leftLayerSelectorDiv) leftLayerSelectorDiv.remove();
+      if (rightLayerSelectorDiv) rightLayerSelectorDiv.remove();
+      leftMap = null;
+      rightMap = null;
+      leftLayerSelectorDiv = null;
+      rightLayerSelectorDiv = null;
+    }
+
+    splitToggle.addEventListener('click', function () {
+      if (!isSplit) {
+        activateSplitScreen();
+        splitToggle.textContent = 'Single screen';
+      } else {
+        deactivateSplitScreen();
+        splitToggle.textContent = 'Split screen';
+      }
+    });
 
     // Update URL on map moveend
     map.on('moveend', function () {
@@ -214,7 +306,6 @@ fetch(capsUrl)
 
     // Add default controls and our custom control
     import('ol/control').then(({ defaults }) => {
-      map.addControl(new LayerButtonsControl());
       defaults().extend([]).forEach(ctrl => map.addControl(ctrl));
     });
   });
