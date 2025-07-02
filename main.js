@@ -6,6 +6,12 @@ import WMTSCapabilities from 'ol/format/WMTSCapabilities.js';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import Control from 'ol/control/Control.js';
 import OSM from 'ol/source/OSM.js';
+import Feature from 'ol/Feature.js';
+import Point from 'ol/geom/Point.js';
+import VectorLayer from 'ol/layer/Vector.js';
+import VectorSource from 'ol/source/Vector.js';
+import Icon from 'ol/style/Icon.js';
+import Style from 'ol/style/Style.js';
 
 const apiKey = '977cd66e-8512-460a-83d3-cb405325c3ff',
   epsg = 'EPSG:3857',
@@ -308,4 +314,54 @@ fetch(capsUrl)
     import('ol/control').then(({ defaults }) => {
       defaults().extend([]).forEach(ctrl => map.addControl(ctrl));
     });
+
+    // --- After map is created ---
+    // Marker logic
+    let searchMarkerLayer = null;
+    function showSearchMarker(lon, lat) {
+      // Remove previous marker layer if exists
+      if (searchMarkerLayer) {
+        map.removeLayer(searchMarkerLayer);
+      }
+      const marker = new Feature({
+        geometry: new Point(fromLonLat([lon, lat]))
+      });
+      marker.setStyle(new Style({
+        image: new Icon({
+          anchor: [0.5, 1],
+          src: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2.png',
+          scale: 1
+        })
+      }));
+      const vectorSource = new VectorSource({ features: [marker] });
+      searchMarkerLayer = new VectorLayer({ source: vectorSource, zIndex: 100 });
+      map.addLayer(searchMarkerLayer);
+    }
+    // Google Places Autocomplete logic
+    if (window.google && window.google.maps && window.google.maps.places) {
+      const input = document.getElementById('search-bar');
+      if (input) {
+        const autocomplete = new window.google.maps.places.Autocomplete(input, {
+          types: ['geocode', 'establishment'],
+        });
+        autocomplete.addListener('place_changed', function () {
+          const place = autocomplete.getPlace();
+          if (!place.geometry || !place.geometry.location) {
+            alert('No details available for input: ' + place.name);
+            return;
+          }
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+          // Pan and zoom the main map
+          if (map && map.getView) {
+            map.getView().setCenter(fromLonLat([lng, lat]));
+            map.getView().setZoom(14);
+            showSearchMarker(lng, lat);
+          }
+        });
+      }
+    } else {
+      // If Google API is not loaded, show a warning in the console
+      console.warn('Google Maps Places API not loaded. Search bar will not work.');
+    }
   });
