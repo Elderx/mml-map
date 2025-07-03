@@ -74,6 +74,136 @@ let leftOverlayDropdownPanel = null;
 let rightOverlayDropdownButton = null;
 let rightOverlayDropdownPanel = null;
 
+// --- Overlay GetFeatureInfo popup logic ---
+let overlayInfoPopup = null;
+let overlayInfoPopupCloser = null;
+function createOverlayInfoPopup() {
+  if (overlayInfoPopup) overlayInfoPopup.remove();
+  overlayInfoPopup = document.createElement('div');
+  overlayInfoPopup.className = 'overlay-info-popup';
+  overlayInfoPopup.style.position = 'absolute';
+  overlayInfoPopup.style.minWidth = '260px';
+  overlayInfoPopup.style.maxWidth = '420px';
+  overlayInfoPopup.style.maxHeight = '350px';
+  overlayInfoPopup.style.overflow = 'auto';
+  overlayInfoPopup.style.background = 'rgba(255,255,255,0.98)';
+  overlayInfoPopup.style.border = '2px solid #0077cc';
+  overlayInfoPopup.style.borderRadius = '10px';
+  overlayInfoPopup.style.boxShadow = '0 2px 16px rgba(0,0,0,0.18)';
+  overlayInfoPopup.style.padding = '12px 16px 8px 16px';
+  overlayInfoPopup.style.zIndex = 1001;
+  overlayInfoPopup.style.fontSize = '1em';
+  overlayInfoPopup.style.color = '#222';
+  overlayInfoPopup.style.lineHeight = '1.5';
+  overlayInfoPopup.style.pointerEvents = 'auto';
+  overlayInfoPopup.style.userSelect = 'text';
+  overlayInfoPopup.style.top = '0';
+  overlayInfoPopup.style.left = '0';
+  overlayInfoPopup.innerHTML = '';
+  overlayInfoPopupCloser = document.createElement('button');
+  overlayInfoPopupCloser.textContent = '×';
+  overlayInfoPopupCloser.style.position = 'absolute';
+  overlayInfoPopupCloser.style.top = '6px';
+  overlayInfoPopupCloser.style.right = '10px';
+  overlayInfoPopupCloser.style.background = 'none';
+  overlayInfoPopupCloser.style.border = 'none';
+  overlayInfoPopupCloser.style.fontSize = '1.5em';
+  overlayInfoPopupCloser.style.cursor = 'pointer';
+  overlayInfoPopupCloser.style.color = '#0077cc';
+  overlayInfoPopupCloser.addEventListener('click', function() {
+    overlayInfoPopup.style.display = 'none';
+  });
+  overlayInfoPopup.appendChild(overlayInfoPopupCloser);
+  document.body.appendChild(overlayInfoPopup);
+}
+function showOverlayInfoPopup(html, pixel) {
+  createOverlayInfoPopup();
+  overlayInfoPopup.style.display = 'block';
+  overlayInfoPopup.innerHTML += html;
+  // Position popup near click (pixel is [x, y] in viewport)
+  let x = pixel[0] + 10;
+  let y = pixel[1] + 10;
+  // Clamp to viewport
+  const maxX = window.innerWidth - overlayInfoPopup.offsetWidth - 20;
+  const maxY = window.innerHeight - overlayInfoPopup.offsetHeight - 20;
+  if (x > maxX) x = maxX;
+  if (y > maxY) y = maxY;
+  overlayInfoPopup.style.left = x + 'px';
+  overlayInfoPopup.style.top = y + 'px';
+  // Add close button again (since innerHTML was set)
+  overlayInfoPopup.appendChild(overlayInfoPopupCloser);
+}
+function clearOverlayInfoPopup() {
+  if (overlayInfoPopup) overlayInfoPopup.style.display = 'none';
+}
+// --- Add click handler for overlays ---
+function handleOverlayInfoClick(evt, mapObj, overlays) {
+  if (drawingMode || overlays.length === 0) return;
+  clearOverlayInfoPopup();
+  const view = mapObj.getView();
+  const coordinate = evt.coordinate;
+  const pixel = mapObj.getEventPixel(evt.originalEvent);
+  const resolution = view.getResolution();
+  const projection = view.getProjection();
+  let promises = [];
+  overlays.forEach(layerName => {
+    const layerObj = overlayLayerObjects[mapObj === map ? 'main' : mapObj === leftMap ? 'left' : 'right'].find(l => l.getSource().getParams().LAYERS === layerName);
+    if (!layerObj) return;
+    const url = layerObj.getSource().getFeatureInfoUrl(
+      coordinate,
+      resolution,
+      projection,
+      { 'INFO_FORMAT': 'text/html', 'QUERY_LAYERS': layerName }
+    );
+    if (url) {
+      promises.push(
+        fetch(url)
+          .then(r => r.text())
+          .then(html => ({ layerName, html }))
+          .catch(() => null)
+      );
+    }
+  });
+  if (promises.length === 0) return;
+  Promise.all(promises).then(results => {
+    let anyContent = false;
+    let html = '';
+    results.forEach(res => {
+      if (res && res.html && res.html.trim() && !/no features found/i.test(res.html)) {
+        anyContent = true;
+        const layerTitle = wmsOverlayList.find(l => l.name === res.layerName)?.title || res.layerName;
+        html += `<div style="margin-bottom:12px;"><div style="font-weight:bold;font-size:1.08em;margin-bottom:4px;color:#0077cc;">${layerTitle}</div><div>${res.html}</div></div>`;
+      }
+    });
+    if (anyContent) {
+      showOverlayInfoPopup(html, pixel);
+    }
+  });
+}
+// Attach handler to all maps
+function enableOverlayInfoClickHandlers() {
+  // Remove previous listeners if any
+  if (typeof map !== 'undefined' && overlayInfoClickHandlerMain) map.un('singleclick', overlayInfoClickHandlerMain);
+  if (typeof leftMap !== 'undefined' && leftMap && overlayInfoClickHandlerLeft) leftMap.un('singleclick', overlayInfoClickHandlerLeft);
+  if (typeof rightMap !== 'undefined' && rightMap && overlayInfoClickHandlerRight) rightMap.un('singleclick', overlayInfoClickHandlerRight);
+  overlayInfoClickHandlerMain = function(evt) { handleOverlayInfoClick(evt, map, overlayLayers); };
+  overlayInfoClickHandlerLeft = function(evt) { handleOverlayInfoClick(evt, leftMap, overlayLayers); };
+  overlayInfoClickHandlerRight = function(evt) { handleOverlayInfoClick(evt, rightMap, overlayLayers); };
+  if (typeof map !== 'undefined') map.on('singleclick', overlayInfoClickHandlerMain);
+  if (typeof leftMap !== 'undefined' && leftMap) leftMap.on('singleclick', overlayInfoClickHandlerLeft);
+  if (typeof rightMap !== 'undefined' && rightMap) rightMap.on('singleclick', overlayInfoClickHandlerRight);
+}
+let overlayInfoClickHandlerMain = null;
+let overlayInfoClickHandlerLeft = null;
+let overlayInfoClickHandlerRight = null;
+
+// When drawing/marker mode is enabled, disable overlay info click handlers
+function disableOverlayInfoClickHandlers() {
+  if (typeof map !== 'undefined' && overlayInfoClickHandlerMain) map.un('singleclick', overlayInfoClickHandlerMain);
+  if (typeof leftMap !== 'undefined' && leftMap && overlayInfoClickHandlerLeft) leftMap.un('singleclick', overlayInfoClickHandlerLeft);
+  if (typeof rightMap !== 'undefined' && rightMap && overlayInfoClickHandlerRight) rightMap.un('singleclick', overlayInfoClickHandlerRight);
+}
+
 fetch(capsUrl)
   .then(function (response) {
     return response.text();
@@ -200,6 +330,7 @@ fetch(capsUrl)
     // Set initial left/right layer ids for split mode
     let leftLayerId = initialLeftLayerId;
     let rightLayerId = initialRightLayerId;
+    // Enable overlay info click handlers now that map is defined
 
     // --- Layer selector dropdown creation ---
     function createLayerSelectorDropdown(initialId, onChange) {
@@ -568,6 +699,9 @@ fetch(capsUrl)
         }
       }
       updatePermalinkWithFeatures();
+      // Re-enable overlay info click handlers after marker is placed
+      drawingMode = null;
+      enableOverlayInfoClickHandlers();
     }
 
     // --- Drawing mode state and handler management ---
@@ -843,6 +977,7 @@ fetch(capsUrl)
     drawLineBtn.addEventListener('click', function () {
       drawingMode = 'line';
       clearAllMarkers();
+      disableOverlayInfoClickHandlers();
       if (!isSplit) {
         clearDrawInteraction();
         clearDrawnFeatures('main', map);
@@ -858,6 +993,7 @@ fetch(capsUrl)
           showLine(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         map.addInteraction(drawInteraction);
@@ -881,6 +1017,7 @@ fetch(capsUrl)
           showLine(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         leftMap.addInteraction(drawInteractionLeft);
@@ -891,6 +1028,7 @@ fetch(capsUrl)
           showLine(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         rightMap.addInteraction(drawInteractionRight);
@@ -900,6 +1038,7 @@ fetch(capsUrl)
     drawPolygonBtn.addEventListener('click', function () {
       drawingMode = 'polygon';
       clearAllMarkers();
+      disableOverlayInfoClickHandlers();
       if (!isSplit) {
         clearDrawInteraction();
         clearDrawnFeatures('main', map);
@@ -915,6 +1054,7 @@ fetch(capsUrl)
           showPolygon(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         map.addInteraction(drawInteraction);
@@ -938,6 +1078,7 @@ fetch(capsUrl)
           showPolygon(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         leftMap.addInteraction(drawInteractionLeft);
@@ -948,6 +1089,7 @@ fetch(capsUrl)
           showPolygon(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         rightMap.addInteraction(drawInteractionRight);
@@ -957,6 +1099,7 @@ fetch(capsUrl)
     drawMeasureBtn.addEventListener('click', function () {
       drawingMode = 'measure';
       clearAllMarkers();
+      disableOverlayInfoClickHandlers();
       if (!isSplit) {
         clearDrawInteraction();
         clearDrawnFeatures('main', map);
@@ -991,6 +1134,7 @@ fetch(capsUrl)
           showMeasureLine(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         map.addInteraction(drawInteraction);
@@ -1051,6 +1195,7 @@ fetch(capsUrl)
           showMeasureLine(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         leftMap.addInteraction(drawInteractionLeft);
@@ -1096,6 +1241,7 @@ fetch(capsUrl)
           showMeasureLine(coords);
           clearDrawInteraction();
           drawingMode = null;
+          enableOverlayInfoClickHandlers();
           updatePermalinkWithFeatures();
         });
         rightMap.addInteraction(drawInteractionRight);
@@ -1111,6 +1257,7 @@ fetch(capsUrl)
       if (rightMap) clearDrawnFeatures('right', rightMap);
       drawMenu.style.display = 'none';
       enableMarkerClickHandler();
+      disableOverlayInfoClickHandlers();
     });
 
     // --- Restore features from URL on load ---
