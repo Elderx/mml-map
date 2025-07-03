@@ -1,0 +1,1576 @@
+<?xml version="1.0" encoding="UTF-8"?><WMS_Capabilities version="1.3.0" updateSequence="38250" xmlns="http://www.opengis.net/wms" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wms https://avoinapi.vaylapilvi.fi/vaylatiedot/schemas/wms/1.3.0/capabilities_1_3_0.xsd">
+  <Service>
+    <Name>WMS</Name>
+    <Title>Väylätiedot</Title>
+    <Abstract>Väyläviraston tietojärjestelmien avoimen datan julkaisu</Abstract>
+    <KeywordList/>
+    <OnlineResource xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/"/>
+    <ContactInformation>
+      <ContactPersonPrimary>
+        <ContactPerson>Paikkatietopalvelut</ContactPerson>
+        <ContactOrganization>Väylävirasto</ContactOrganization>
+      </ContactPersonPrimary>
+      <ContactPosition/>
+      <ContactAddress>
+        <AddressType/>
+        <Address/>
+        <City/>
+        <StateOrProvince/>
+        <PostCode/>
+        <Country>Finland</Country>
+      </ContactAddress>
+      <ContactVoiceTelephone/>
+      <ContactFacsimileTelephone/>
+      <ContactElectronicMailAddress>ptptuki@sitowise.com</ContactElectronicMailAddress>
+    </ContactInformation>
+    <Fees>none</Fees>
+    <AccessConstraints>The data in this service is licensed under a Creative Commons Attribution 4.0 license - http://creativecommons.org/licenses/by/4.0/</AccessConstraints>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?SERVICE=WMS&amp;"/>
+            </Get>
+            <Post>
+              <OnlineResource xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?SERVICE=WMS&amp;"/>
+            </Post>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>application/atom+xml</Format>
+        <Format>application/geopackage+sqlite3</Format>
+        <Format>application/json;type=geojson</Format>
+        <Format>application/json;type=topojson</Format>
+        <Format>application/json;type=utfgrid</Format>
+        <Format>application/pdf</Format>
+        <Format>application/rss+xml</Format>
+        <Format>application/vnd.google-earth.kml+xml</Format>
+        <Format>application/vnd.google-earth.kml+xml;mode=networklink</Format>
+        <Format>application/vnd.google-earth.kmz</Format>
+        <Format>application/vnd.mapbox-vector-tile</Format>
+        <Format>image/geotiff</Format>
+        <Format>image/geotiff8</Format>
+        <Format>image/gif</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/png; mode=8bit</Format>
+        <Format>image/svg+xml</Format>
+        <Format>image/tiff</Format>
+        <Format>image/tiff8</Format>
+        <Format>image/vnd.jpeg-png</Format>
+        <Format>image/vnd.jpeg-png8</Format>
+        <Format>text/html; subtype=openlayers</Format>
+        <Format>text/html; subtype=openlayers2</Format>
+        <Format>text/html; subtype=openlayers3</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?SERVICE=WMS&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>text/plain</Format>
+        <Format>application/vnd.ogc.gml</Format>
+        <Format>text/xml</Format>
+        <Format>application/vnd.ogc.gml/3.1.1</Format>
+        <Format>text/xml; subtype=gml/3.1.1</Format>
+        <Format>text/html</Format>
+        <Format>application/json</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?SERVICE=WMS&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+    </Request>
+    <Exception>
+      <Format>XML</Format>
+      <Format>INIMAGE</Format>
+      <Format>BLANK</Format>
+      <Format>JSON</Format>
+    </Exception>
+    <Layer>
+      <Title>Väylätiedot</Title>
+      <Abstract>Väyläviraston tietojärjestelmien avoimen datan julkaisu</Abstract>
+      <!--Limited list of EPSG projections:-->
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:4326</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:3873</CRS>
+      <CRS>EPSG:3874</CRS>
+      <CRS>EPSG:3875</CRS>
+      <CRS>EPSG:3876</CRS>
+      <CRS>EPSG:3877</CRS>
+      <CRS>EPSG:3878</CRS>
+      <CRS>EPSG:3879</CRS>
+      <CRS>EPSG:3880</CRS>
+      <CRS>EPSG:3881</CRS>
+      <CRS>EPSG:3882</CRS>
+      <CRS>EPSG:3883</CRS>
+      <CRS>EPSG:3884</CRS>
+      <CRS>EPSG:3885</CRS>
+      <CRS>EPSG:3995</CRS>
+      <CRS>CRS:84</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-180.0</westBoundLongitude>
+        <eastBoundLongitude>180.0</eastBoundLongitude>
+        <southBoundLatitude>58.6074565294299</southBoundLatitude>
+        <northBoundLatitude>70.26415662234614</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:84" minx="-180.0" miny="58.6074565294299" maxx="180.0" maxy="70.26415662234614"/>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_ajoneuvokoht_rajoitus</Name>
+        <Title>Ajoneuvokohtainen rajoitus (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_ajoneuvokoht_rajoitus</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_ajoneuvokoht_rajoitus</Name>
+          <Title>dr_ajoneuvokoht_rajoitus</Title>
+          <LegendURL width="149" height="380">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_ajoneuvokoht_rajoitus"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_ajoneuvokoht_rajoitus_yt</Name>
+        <Title>Ajoneuvokohtaiset rajoitukset yksityisteillä</Title>
+        <Abstract>Karttataso on luotu yksityisteiden ilmoittamista varten ja se sisältää kyseisen Digiroad-tietolajin tiedot ainoastaan yksityisteiden osalta.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>17.712959018488824</westBoundLongitude>
+          <eastBoundLongitude>31.738110231400995</eastBoundLongitude>
+          <southBoundLatitude>59.64922604933624</southBoundLatitude>
+          <northBoundLatitude>67.20487071698356</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="17.712959018488824" miny="59.64922604933624" maxx="31.738110231400995" maxy="67.20487071698356"/>
+        <BoundingBox CRS="EPSG:3067" minx="95189.15625" miny="6634312.5" maxx="705286.25" maxy="7454219.5"/>
+        <Style>
+          <Name>DR_Ajoneuvokohtainenrajoitus_YT</Name>
+          <Title>DR_Ajoneuvokohtainenrajoitus_YT</Title>
+          <LegendURL width="418" height="380">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_ajoneuvokoht_rajoitus_yt"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_esterakennelma</Name>
+        <Title>Esterakennelma (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_esterakennelma</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_esterakennelma</Name>
+          <Title>dr_esterakennelma</Title>
+          <LegendURL width="185" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_esterakennelma"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>2000000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_eurooppatienro</Name>
+        <Title>Eurooppatienumero (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_eurooppatienro</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_eurooppatienro</Name>
+          <Title>Eurooppatienumero</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_eurooppatienro"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_hoitoluokat</Name>
+        <Title>Hoitoluokat (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_hoitoluokat</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_hoitoluokat</Name>
+          <Title>dr_hoitoluokat</Title>
+          <LegendURL width="324" height="360">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_hoitoluokat"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>150000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_joukkoliikennekaista</Name>
+        <Title>Joukkoliikennekaista (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_joukkoliikennekaista</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_joukkoliikennekaista</Name>
+          <Title>dr_joukkoliikennekaista</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_joukkoliikennekaista"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_kaantraj_linkki</Name>
+        <Title>Kääntymisrajoitusten linkit (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_kaantymisrajoitus</Name>
+          <Title>dr_kaantymisrajoitus</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_kaantraj_linkki"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_kaantymisrajoitus</Name>
+        <Title>Kääntymisrajoitus (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_kaantymisrajoitus</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_kaantymisrajoitus</Name>
+          <Title>dr_kaantymisrajoitus</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_kaantymisrajoitus"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_kaistojen_lukumaara</Name>
+        <Title>Kaistojen lukumäärä (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>16.257677251978997</westBoundLongitude>
+          <eastBoundLongitude>32.987561822305764</eastBoundLongitude>
+          <southBoundLatitude>59.67894310215384</southBoundLatitude>
+          <northBoundLatitude>70.09172274119112</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="16.257677251978997" miny="59.67894310215384" maxx="32.987561822305764" maxy="70.09172274119112"/>
+        <BoundingBox CRS="EPSG:3067" minx="87197.5" miny="6638528.0" maxx="728327.0" maxy="7776148.0"/>
+        <Style>
+          <Name>dr_kaistojen_lukumaara</Name>
+          <Title>dr_kaistojen_lukumaara</Title>
+          <LegendURL width="33" height="100">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_kaistojen_lukumaara"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>2000000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_kelirikko</Name>
+        <Title>Kelirikko (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_kelirikko</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_kelirikko</Name>
+          <Title>dr_kelirikko</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_kelirikko"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>500000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_kelirikko_yt</Name>
+        <Title>Kelirikko yksityisteillä</Title>
+        <Abstract>Karttataso on luotu yksityisteiden ilmoittamista varten ja se sisältää kyseisen Digiroad-tietolajin tiedot ainoastaan yksityisteiden osalta.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>18.27750102258079</westBoundLongitude>
+          <eastBoundLongitude>31.702516582070142</eastBoundLongitude>
+          <southBoundLatitude>59.738923592159615</southBoundLatitude>
+          <northBoundLatitude>67.26095608338748</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="18.27750102258079" miny="59.738923592159615" maxx="31.702516582070142" maxy="67.26095608338748"/>
+        <BoundingBox CRS="EPSG:3067" minx="121048.5390625" miny="6641646.5" maxx="703262.5" maxy="7460487.0"/>
+        <Style>
+          <Name>dr_kelirikko</Name>
+          <Title>dr_kelirikko</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_kelirikko_yt"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>500000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_leveys</Name>
+        <Title>Leveys (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>dr_leveys</Keyword>
+          <Keyword>features</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_leveys</Name>
+          <Title>Ajoradan leveys</Title>
+          <LegendURL width="123" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_leveys"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>100000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_liikennemaara</Name>
+        <Title>Liikennemäärä (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_liikennemaara</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_liikennemaara</Name>
+          <Title>dr_liikennemaara</Title>
+          <LegendURL width="125" height="120">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_liikennemaara"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>1000000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_liikennemerkit</Name>
+        <Title>Liikennemerkit (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_liikennemerkit</Name>
+          <Title>Liikennemerkit SVG</Title>
+          <LegendURL width="22" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_liikennemerkit"/>
+          </LegendURL>
+        </Style>
+        <Style>
+          <Name>dr_taajamamerkit</Name>
+          <Title>Taajamaliikennemerkit SVG</Title>
+          <LegendURL width="22" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_liikennemerkit&amp;style=dr_taajamamerkit"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>5000000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_liikennemerkit_ajantasaisuus</Name>
+        <Title>Liikennemerkkien ajantasaisuus (Digiroad)</Title>
+        <Abstract>Karttataso esittää tietoa Digiroadin liikennemerkkien ajantasaisuudesta. Karttataso liittyy Digiroadin Laaturaportin Laatukarttaan. Aineisto ei päivity automaattisesti.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_liikennemerkit_ajantasaisuus</Name>
+          <Title>Liikennemerkkien ajantasaisuus (Digiroad)</Title>
+          <LegendURL width="394" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_liikennemerkit_ajantasaisuus"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>5.0E8</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_liikennemerkit_kattavuus</Name>
+        <Title>Liikennemerkkien kattavuus (Digiroad)</Title>
+        <Abstract>Karttataso esittää tietoa Digiroadin liikennemerkkien kattavuudesta. Karttataso liittyy Digiroadin Laaturaportin Laatukarttaan. Aineisto ei päivity automaattisesti.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_liikennemerkit_kattavuus</Name>
+          <Title>Liikennemerkkien kattavuus (Digiroad)</Title>
+          <LegendURL width="167" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_liikennemerkit_kattavuus"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>5.0E8</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_liikennemerkit_yt</Name>
+        <Title>Liikennemerkit yksityisteillä</Title>
+        <Abstract>Karttataso on luotu yksityisteiden ilmoittamista varten ja se sisältää kyseisen Digiroad-tietolajin tiedot ainoastaan yksityisteiden osalta.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>19.748865580861608</westBoundLongitude>
+          <eastBoundLongitude>32.07653048428749</eastBoundLongitude>
+          <southBoundLatitude>59.72368129076452</southBoundLatitude>
+          <northBoundLatitude>66.94573931395388</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="19.748865580861608" miny="59.72368129076452" maxx="32.07653048428749" maxy="66.94573931395388"/>
+        <BoundingBox CRS="EPSG:3067" minx="181595.375" miny="6634251.5" maxx="722353.25" maxy="7425657.0"/>
+        <Style>
+          <Name>DR_LIIKENNEMERKIT_YT</Name>
+          <Title>Liikennemerkit SVG</Title>
+          <LegendURL width="22" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_liikennemerkit_yt"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>500000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_liikennevalo</Name>
+        <Title>Liikennevalo (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_liikennevalo</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_liikennevalo</Name>
+          <Title>Liikennevalo (Digiroad)</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_liikennevalo"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_liittymanro</Name>
+        <Title>Liittymänumero (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_liittymanro</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_liittymanumero</Name>
+          <Title>Liittymanumero (Digiroad)</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_liittymanro"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_max_akselimassa</Name>
+        <Title>Suurin sallittu akselimassa (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_max_akselimassa</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_suurin_sallittu_akselimassa</Name>
+          <Title>Suurin sallittu akselimassa</Title>
+          <LegendURL width="88" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_max_akselimassa"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_max_korkeus</Name>
+        <Title>Suurin sallittu korkeus (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_max_korkeus</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_suurin_sallittu_korkeus</Name>
+          <Title>Suurin sallittu korkeus</Title>
+          <LegendURL width="107" height="220">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_max_korkeus"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_max_leveys</Name>
+        <Title>Suurin sallittu leveys (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_max_leveys</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_suurin_sallittu_leveys</Name>
+          <Title>Suurin sallittu leveys</Title>
+          <LegendURL width="107" height="100">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_max_leveys"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_max_massa</Name>
+        <Title>Suurin sallittu massa (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_max_massa</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_suurin_sallittu_massa</Name>
+          <Title>Suurin sallittu massa</Title>
+          <LegendURL width="144" height="140">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_max_massa"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_max_massa_yt</Name>
+        <Title>Ajoneuvon suurin sallittu massa, yksityistiet</Title>
+        <Abstract>Karttataso on luotu yksityisteiden ilmoittamista varten ja se sisältää kyseisen Digiroad-tietolajin tiedot ainoastaan yksityisteiden osalta.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>17.289418639560523</westBoundLongitude>
+          <eastBoundLongitude>31.31722069382392</eastBoundLongitude>
+          <southBoundLatitude>59.71157220431669</southBoundLatitude>
+          <northBoundLatitude>67.65791219634137</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="17.289418639560523" miny="59.71157220431669" maxx="31.31722069382392" maxy="67.65791219634137"/>
+        <BoundingBox CRS="EPSG:3067" minx="84375.5546875" miny="6642507.0" maxx="683460.5625" maxy="7504775.5"/>
+        <Style>
+          <Name>DR_Max_massa_YT</Name>
+          <Title>Suurin sallittu massa</Title>
+          <LegendURL width="144" height="140">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_max_massa_yt"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_max_pituus</Name>
+        <Title>Suurin sallittu pituus (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_max_pituus</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_suurin_sallittu_pituus</Name>
+          <Title>Suurin sallittu pituus</Title>
+          <LegendURL width="131" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_max_pituus"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_max_telimassa</Name>
+        <Title>Suurin sallittu telimassa (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_max_telimassa</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_suurin_sallittu_telimassa</Name>
+          <Title>Suurin sallittu telimassa</Title>
+          <LegendURL width="96" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_max_telimassa"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_nopeusrajoitus</Name>
+        <Title>Nopeusrajoitus (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_nopeusrajoitus</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_nopeusrajoitus</Name>
+          <Title>dr_nopeusrajoitus</Title>
+          <LegendURL width="83" height="200">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_nopeusrajoitus"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>362834.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_nopeusrajoitus_ajantasaisuus</Name>
+        <Title>Nopeusrajoitusten ajantasaisuus (Digiroad)</Title>
+        <Abstract>Karttataso esittää tietoa Digiroadin nopeusrajoitusten ajantasaisuudesta. Karttataso liittyy Digiroadin Laaturaportin Laatukarttaan. Aineisto ei päivity automaattisesti.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_nopeusrajoitus_ajantasaisuus</Name>
+          <Title>Nopeusrajoitusten ajantasaisuus (Digiroad)</Title>
+          <LegendURL width="394" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_nopeusrajoitus_ajantasaisuus"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>5.0E8</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_nopeusrajoitus_kattavuus</Name>
+        <Title>Nopeusrajoitusten kattavuus (Digiroad)</Title>
+        <Abstract>Karttataso esittää tietoa Digiroadin nopeusrajoitusten kattavuudesta. Karttataso liittyy Digiroadin Laaturaportin Laatukarttaan. Aineisto ei päivity automaattisesti.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_nopeusrajoitus_kattavuus</Name>
+          <Title>Nopeusrajoitusten kattavuus (Digiroad)</Title>
+          <LegendURL width="167" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_nopeusrajoitus_kattavuus"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>5.0E8</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_nopeusrajoitus_yt</Name>
+        <Title>Nopeusrajoitukset yksityisteillä</Title>
+        <Abstract>Karttataso on luotu yksityisteiden ilmoittamista varten ja se sisältää kyseisen Digiroad-tietolajin tiedot ainoastaan yksityisteiden osalta.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>17.240650541816795</westBoundLongitude>
+          <eastBoundLongitude>32.27319055666743</eastBoundLongitude>
+          <southBoundLatitude>59.63507395062198</southBoundLatitude>
+          <northBoundLatitude>67.77346955378532</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="17.240650541816795" miny="59.63507395062198" maxx="32.27319055666743" maxy="67.77346955378532"/>
+        <BoundingBox CRS="EPSG:3067" minx="84291.6796875" miny="6633926.0" maxx="723181.75" maxy="7517628.5"/>
+        <Style>
+          <Name>DR_Nopeusrajoitus_YT</Name>
+          <Title>DR_Nopeusrajoitus_YT</Title>
+          <LegendURL width="83" height="200">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_nopeusrajoitus_yt"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>150000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_opastustaulu</Name>
+        <Title>Opastustaulu (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_opastustaulu</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>19.270225646760096</westBoundLongitude>
+          <eastBoundLongitude>31.883903666133467</eastBoundLongitude>
+          <southBoundLatitude>59.8040666317299</southBoundLatitude>
+          <northBoundLatitude>69.9084801538272</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="19.270225646760096" miny="59.8040666317299" maxx="31.883903666133467" maxy="69.9084801538272"/>
+        <BoundingBox CRS="EPSG:3067" minx="201966.046875" miny="6641553.0" maxx="687658.5625" maxy="7755809.0"/>
+        <Style>
+          <Name>dr_opastaulu</Name>
+          <Title>Opastustaulu (Digiroad)</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_opastustaulu"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_paallystetty_tie</Name>
+        <Title>Päällystetty tie (Digiroad)</Title>
+        <Abstract>Tauluversio, korvaavana materialisoitu näkymä</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_paallystetty_tie</Name>
+          <Title>dr_paallystetty_tie</Title>
+          <LegendURL width="219" height="100">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_paallystetty_tie"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>1451336.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_palvelu</Name>
+        <Title>Palvelu (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>dr_palvelu</Keyword>
+          <Keyword>features</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_palvelu</Name>
+          <Title>Palvelu</Title>
+          <LegendURL width="269" height="320">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_palvelu"/>
+          </LegendURL>
+        </Style>
+        <Style>
+          <Name>DR_palveluttesti</Name>
+          <Title>palvelu</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_palvelu&amp;style=DR_palveluttesti"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_pysakki</Name>
+        <Title>Joukkoliikenteen pysäkit (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_pysakki</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_pysakki</Name>
+          <Title>Tyyppi</Title>
+          <Abstract>Bussipysäkin tyyppi</Abstract>
+          <LegendURL width="207" height="140">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_pysakki"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>200000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_pysakointikielto</Name>
+        <Title>Pysäköintikielto (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_pysakointikielto</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_pysakointikielto</Name>
+          <Title>dr_pysakointikielto</Title>
+          <LegendURL width="163" height="40">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_pysakointikielto"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_rautatien_tasoristeys</Name>
+        <Title>Rautatien tasoristeys (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_rautatien_tasoristeys</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_rautatien_tasoristeys</Name>
+          <Title>dr_rautatien_tasoristeys</Title>
+          <LegendURL width="306" height="100">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_rautatien_tasoristeys"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_solmu</Name>
+        <Title>Solmu (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_solmu</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_solmu</Name>
+          <Title>Solmu (Digiroad)</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_solmu"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>25000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_suojatie</Name>
+        <Title>Suojatie (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>dr_suojatie</Keyword>
+          <Keyword>features</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_suojatie</Name>
+          <Title>Suojatie (Digiroad)</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_suojatie"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_taajama_alueet</Name>
+        <Title>Taajama-alueet (Digiroad)</Title>
+        <Abstract>Tämän aineiston taajama-alueet ja niiden luokitus perustuvat pääsääntöisesti Digiroadissa oleviin taajamaliikennemerkkeihin. Taajama-alueita on muodostettu ja rajattu myös tiekuvissa näkyvien liikennemerkkien perusteella. Liikennemerkkien ja tiekuvien ollessa puutteelliset, rajaus on tehty harkinnanvaraisesti. Apuna on käytetty mahdollisuuksien mukaan myös SYKEn aineistoista taajamarajausta sekä asemakaavoitettua aluetta. Kuntarajat ylittävät taajama-alueet ovat myös pääsääntöisesti rajattu kuntarajojen perusteella.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_taajama_alueet</Name>
+          <Title>dr_taajama_alueet</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_taajama_alueet"/>
+          </LegendURL>
+        </Style>
+        <Style>
+          <Name>dr_taajama_alueet_teemakartta</Name>
+          <Title>Taajama-alueen rajaus</Title>
+          <Abstract>Taajama-alueen rajauksen kuvaus</Abstract>
+          <LegendURL width="200" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_taajama_alueet&amp;style=dr_taajama_alueet_teemakartta"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_talvinopeusrajoitus</Name>
+        <Title>Talvinopeusrajoitus (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_talvinopeusrajoitus</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_talvinopeusrajoitus</Name>
+          <Title>dr_talvinopeusrajoitus</Title>
+          <LegendURL width="83" height="100">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_talvinopeusrajoitus"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>362834.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_tielinkki_hall_lk</Name>
+        <Title>Hallinnollinen luokka (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>DR_Tielinkki_hallinnollinen_luokka</Name>
+          <Title>DR_Tielinkki_hallinnollinen_luokka</Title>
+          <LegendURL width="244" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_tielinkki_hall_lk"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>100000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_tielinkki_silta_alikulku_tunneli</Name>
+        <Title>Silta, alikulku tai tunneli (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_tielinkki</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>DR_Silta_alikulku_tunneli</Name>
+          <Title>DR_Silta_alikulku_tunneli</Title>
+          <LegendURL width="120" height="180">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_tielinkki_silta_alikulku_tunneli"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>90708.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_tielinkki_tielinkin_tyyppi</Name>
+        <Title>Tielinkin tyyppi (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>DR_Tielinkin_tyyppi</Name>
+          <Title>DR_Tielinkin_tyyppi</Title>
+          <LegendURL width="408" height="280">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_tielinkki_tielinkin_tyyppi"/>
+          </LegendURL>
+        </Style>
+        <Style>
+          <Name>dr_tielinkki_rakenteilla</Name>
+          <Title>dr_tielinkki_rakenteilla</Title>
+          <LegendURL width="339" height="40">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_tielinkki_tielinkin_tyyppi&amp;style=dr_tielinkki_rakenteilla"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_tielinkki_toim_lk</Name>
+        <Title>Toiminnallinen luokka (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_tielinkki</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>generic</Name>
+          <Title>Generic</Title>
+          <Abstract>Generic style</Abstract>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_tielinkki_toim_lk"/>
+          </LegendURL>
+        </Style>
+        <Style>
+          <Name>DR_Tielinkki_toiminnallinen_luokka</Name>
+          <Title>DR_Tielinkki_toiminnallinen_luokka</Title>
+          <LegendURL width="308" height="200">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_tielinkki_toim_lk&amp;style=DR_Tielinkki_toiminnallinen_luokka"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_tietyot</Name>
+        <Title>Tietyöt (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_tietyot</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>generic</Name>
+          <Title>Generic</Title>
+          <Abstract>Generic style</Abstract>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_tietyot"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_tuntematon_nopeusrajoitus</Name>
+        <Title>Tuntematon nopeusrajoitus (Digiroad)</Title>
+        <Abstract>Karttataso esittää tietoa Digiroadin nopeusrajoitustiedon puutteeista. Karttataso liittyy Digiroadin Laaturaportin Laatukarttaan. Aineisto ei päivity automaattisesti.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_tuntematon_nopeusrajoitus</Name>
+          <Title>Tuntematon nopeusrajoitus Digiroad</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_tuntematon_nopeusrajoitus"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_vak_rajoitus</Name>
+        <Title>VAK-rajoitus (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_vak_rajoitus</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_vak</Name>
+          <Title>dr_vak</Title>
+          <LegendURL width="60" height="40">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_vak_rajoitus"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_valaistu_tie</Name>
+        <Title>Valaistu tie (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_valaistu_tie</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_valaistu_tie</Name>
+          <Title>dr_valaistu_tie</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_valaistu_tie"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>100000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_yhdistelman_max_massa</Name>
+        <Title>Yhdistelmän suurin salllittu massa (Digiroad)</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>dr_yhdistelman_max_massa</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_suurin_sallittu_yhdistelman_massa</Name>
+          <Title>Yhdistelmän suurin salllittu massa</Title>
+          <LegendURL width="144" height="100">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_yhdistelman_max_massa"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>dr_ytilmoitus_yt</Name>
+        <Title>Yksityistietieto (Digiroad, ei ladattavissa)</Title>
+        <Abstract>Karttataso on luotu yksityisteiden ilmoittamista varten ja se sisältää kyseisen Digiroad-tietolajin tiedot ainoastaan yksityisteiden osalta. Aineisto ei ole ladattavissa.</Abstract>
+        <KeywordList>
+          <Keyword>dr_ytilmoitus_yt</Keyword>
+          <Keyword>features</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>-180.0</westBoundLongitude>
+          <eastBoundLongitude>180.0</eastBoundLongitude>
+          <southBoundLatitude>59.63097306466315</southBoundLatitude>
+          <northBoundLatitude>68.24569338481828</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="-180.0" miny="59.63097306466315" maxx="180.0" maxy="68.24569338481828"/>
+        <BoundingBox CRS="EPSG:3067" minx="82256.78125" miny="6633693.5" maxx="732266.3125" maxy="7570305.0"/>
+        <Style>
+          <Name>DR_Yksityistietieto_YT</Name>
+          <Title>DR_Yksityistietieto_YT</Title>
+          <LegendURL width="754" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=dr_ytilmoitus_yt"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>50000.0</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>taajamamerkkihuomiot_kadut</Name>
+        <Title>Taajamamerkkihuomiot kaduilla</Title>
+        <Abstract>Digiroadin taajamaliikennemerkkien huomiot kaduilla. Karttataso julkaistu Digiroadin ylläpitoraportin Taajamakarttaa varten.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_taajamamerkit_katu</Name>
+          <Title>Taajamamerkkihuomiot</Title>
+          <LegendURL width="156" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=taajamamerkkihuomiot_kadut"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>5.0E8</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>taajamamerkkihuomiot_maantie</Name>
+        <Title>Taajamamerkkihuomiot maanteillä</Title>
+        <Abstract>Digiroadin taajamamerkkien huomiot maanteillä. Karttataso julkaistu Digiroadin ylläpitoraportin Taajamakarttaa varten.</Abstract>
+        <KeywordList/>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_taajamamerkit_maantie</Name>
+          <Title>Taajamamerkkihuomiot</Title>
+          <LegendURL width="156" height="80">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=taajamamerkkihuomiot_maantie"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>5.0E8</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="1" opaque="0">
+        <Name>tiekunnalliset_yksityistiet</Name>
+        <Title>Tiekunnalliset yksityistiet</Title>
+        <Abstract/>
+        <KeywordList>
+          <Keyword>features</Keyword>
+          <Keyword>Yksityistietieto_view</Keyword>
+        </KeywordList>
+        <CRS>EPSG:3067</CRS>
+        <CRS>CRS:84</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>15.053785270822841</westBoundLongitude>
+          <eastBoundLongitude>33.993537468175056</eastBoundLongitude>
+          <southBoundLatitude>58.6074565294299</southBoundLatitude>
+          <northBoundLatitude>70.26415662234614</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="CRS:84" minx="15.053785270822841" miny="58.6074565294299" maxx="33.993537468175056" maxy="70.26415662234614"/>
+        <BoundingBox CRS="EPSG:3067" minx="43547.78932226647" miny="6523158.091198515" maxx="764796.7155847414" maxy="7795461.187543589"/>
+        <Style>
+          <Name>dr_yksityistietieto</Name>
+          <Title>dr_yksityistietieto</Title>
+          <LegendURL width="211" height="60">
+            <Format>image/png</Format>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=tiekunnalliset_yksityistiet"/>
+          </LegendURL>
+        </Style>
+        <MaxScaleDenominator>350000.0</MaxScaleDenominator>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMS_Capabilities>

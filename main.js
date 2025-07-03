@@ -19,11 +19,14 @@ import LineString from 'ol/geom/LineString.js';
 import Polygon from 'ol/geom/Polygon.js';
 import Overlay from 'ol/Overlay.js';
 import { getLength } from 'ol/sphere.js';
+import TileWMS from 'ol/source/TileWMS.js';
 
 const apiKey = '977cd66e-8512-460a-83d3-cb405325c3ff',
   epsg = 'EPSG:3857',
   tileMatrixSet = 'WGS84_Pseudo-Mercator',
-  capsUrl = `https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/WMTSCapabilities.xml?api-key=${apiKey}`;
+  capsUrl = `https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/WMTSCapabilities.xml?api-key=${apiKey}`,
+  wmsUrl = 'https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/wms',
+  wmsCapabilitiesUrl = 'https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/wms?request=getcapabilities&service=wms';
 
 const hardcodedLayers = [
   { id: 'taustakartta', name: 'Taustakartta', type: 'wmts' },
@@ -53,6 +56,23 @@ let drawnPolygonFeature = { main: null, left: null, right: null };
 let measureLineLayer = { main: null, left: null, right: null };
 let measureLineFeature = { main: null, left: null, right: null };
 let measureLabelOverlay = { main: null, left: null, right: null };
+let overlayLayers = [];
+let overlayLayerObjects = { main: [], left: [], right: [] };
+let wmsOverlayList = [];
+let wmsOverlayLegends = {};
+
+let overlaySelectorDiv = null;
+let leftOverlaySelectorDiv = null;
+let rightOverlaySelectorDiv = null;
+
+// Overlay dropdown state
+let overlayDropdownOpen = false;
+let overlayDropdownButton = null;
+let overlayDropdownPanel = null;
+let leftOverlayDropdownButton = null;
+let leftOverlayDropdownPanel = null;
+let rightOverlayDropdownButton = null;
+let rightOverlayDropdownPanel = null;
 
 fetch(capsUrl)
   .then(function (response) {
@@ -1130,6 +1150,12 @@ fetch(capsUrl)
           measureCoords = coords.map(pair => fromLonLat([pair[0], pair[1]]));
         }
       }
+      // Overlays
+      overlayLayers = [];
+      if (params.overlays) {
+        overlayLayers = params.overlays.split(';').filter(Boolean);
+        updateAllOverlays();
+      }
       showAllDrawables();
       restoringFromPermalink = false;
       permalinkInitialized = true;
@@ -1238,6 +1264,10 @@ fetch(capsUrl)
         const coords = measureCoords.map(c => toLonLat(c).map(n => n.toFixed(7)));
         measureStr = `&measure=${coords.map(pair => pair.join(",")).join(';')}`;
       }
+      let overlaysStr = '';
+      if (overlayLayers && overlayLayers.length > 0) {
+        overlaysStr = `&overlays=${overlayLayers.join(';')}`;
+      }
       const view = isSplit && leftMap ? leftMap.getView() : map.getView();
       const zoom = view.getZoom();
       const center = view.getCenter();
@@ -1248,7 +1278,7 @@ fetch(capsUrl)
         let layerId = map.getLayers().item(0).getSource().getLayer ? map.getLayers().item(0).getSource().getLayer() : hardcodedLayers[initialLayerIdx].id;
         params += `&layer=${layerId}`;
       }
-      params += markerStr + lineStr + polyStr + measureStr;
+      params += markerStr + lineStr + polyStr + measureStr + overlaysStr;
       window.history.replaceState({}, '', params);
     }
 
@@ -1258,5 +1288,259 @@ fetch(capsUrl)
       showLine(lineCoords);
       showPolygon(polygonCoords);
       showMeasureLine(measureCoords);
+    }
+
+    // Fetch and parse WMS overlays
+    fetch(wmsCapabilitiesUrl)
+      .then(r => r.text())
+      .then(xmlText => {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(xmlText, 'text/xml');
+        const layers = Array.from(xml.querySelectorAll('Layer > Layer'));
+        wmsOverlayList = layers.map(layer => {
+          const name = layer.querySelector('Name')?.textContent;
+          const title = layer.querySelector('Title')?.textContent;
+          const legendUrl = layer.querySelector('LegendURL OnlineResource')?.getAttribute('xlink:href');
+          if (name && title) {
+            if (legendUrl) wmsOverlayLegends[name] = legendUrl;
+            return { name, title };
+          }
+          return null;
+        }).filter(Boolean);
+        // After overlays loaded, add overlay selectors
+        addOverlaySelectorToMap();
+      });
+
+    function createWMSOverlayLayer(layerName) {
+      return new TileLayer({
+        opacity: 0.7,
+        source: new TileWMS({
+          url: wmsUrl,
+          params: { LAYERS: layerName, TRANSPARENT: true, VERSION: '1.3.0' },
+          crossOrigin: 'anonymous',
+        }),
+        zIndex: 50,
+      });
+    }
+    function updateAllOverlays() {
+      // Remove all overlays from all maps
+      ['main', 'left', 'right'].forEach(key => {
+        (overlayLayerObjects[key] || []).forEach(layer => {
+          if (key === 'main' && map) map.removeLayer(layer);
+          if (key === 'left' && leftMap) leftMap.removeLayer(layer);
+          if (key === 'right' && rightMap) rightMap.removeLayer(layer);
+        });
+        overlayLayerObjects[key] = [];
+      });
+      // Add overlays to all active maps
+      overlayLayers.forEach(layerName => {
+        const layer = createWMSOverlayLayer(layerName);
+        overlayLayerObjects.main.push(layer);
+        if (map) map.addLayer(layer);
+        if (isSplit) {
+          const leftLayer = createWMSOverlayLayer(layerName);
+          overlayLayerObjects.left.push(leftLayer);
+          if (leftMap) leftMap.addLayer(leftLayer);
+          const rightLayer = createWMSOverlayLayer(layerName);
+          overlayLayerObjects.right.push(rightLayer);
+          if (rightMap) rightMap.addLayer(rightLayer);
+        }
+      });
+    }
+
+    // --- Split screen overlay logic ---
+    const _activateSplitScreenWithOverlays = activateSplitScreen;
+    activateSplitScreen = function() {
+      _activateSplitScreenWithOverlays();
+      updateAllOverlays();
+    };
+    const _deactivateSplitScreenWithOverlays = deactivateSplitScreen;
+    deactivateSplitScreen = function() {
+      _deactivateSplitScreenWithOverlays();
+      updateAllOverlays();
+    };
+
+    function getOverlaySummary(selected) {
+      if (!selected || selected.length === 0) return 'No overlays';
+      if (selected.length === 1) {
+        const found = wmsOverlayList.find(l => l.name === selected[0]);
+        return found ? found.title : selected[0];
+      }
+      if (selected.length <= 2) {
+        return selected.map(n => {
+          const found = wmsOverlayList.find(l => l.name === n);
+          return found ? found.title : n;
+        }).join(', ');
+      }
+      return `${selected.length} selected`;
+    }
+
+    function createOverlayDropdown(mapKey, selected, onChange) {
+      // mapKey: 'main', 'left', 'right'
+      let dropdownButton = document.createElement('button');
+      dropdownButton.type = 'button';
+      dropdownButton.className = 'overlay-dropdown-btn';
+      dropdownButton.style.width = '100%';
+      dropdownButton.style.textAlign = 'left';
+      dropdownButton.style.padding = '8px';
+      dropdownButton.style.borderRadius = '6px';
+      dropdownButton.style.border = '1px solid #ccc';
+      dropdownButton.style.background = 'white';
+      dropdownButton.style.cursor = 'pointer';
+      dropdownButton.style.fontSize = '1em';
+      dropdownButton.style.margin = '0';
+      dropdownButton.style.boxSizing = 'border-box';
+      dropdownButton.style.outline = 'none';
+      dropdownButton.style.position = 'relative';
+      dropdownButton.textContent = getOverlaySummary(selected);
+      let dropdownPanel = document.createElement('div');
+      dropdownPanel.className = 'overlay-dropdown-panel';
+      dropdownPanel.style.display = 'none';
+      dropdownPanel.style.position = 'absolute';
+      dropdownPanel.style.left = '0';
+      dropdownPanel.style.top = '110%';
+      dropdownPanel.style.width = '100%';
+      dropdownPanel.style.background = 'rgba(255,255,255,0.97)';
+      dropdownPanel.style.padding = '10px 12px';
+      dropdownPanel.style.borderRadius = '10px';
+      dropdownPanel.style.boxShadow = '0 2px 12px rgba(0,0,0,0.13)';
+      dropdownPanel.style.maxWidth = '320px';
+      dropdownPanel.style.minWidth = '180px';
+      dropdownPanel.style.boxSizing = 'border-box';
+      dropdownPanel.style.overflow = 'auto';
+      dropdownPanel.style.maxHeight = '350px';
+      dropdownPanel.style.zIndex = '100';
+      // Label
+      const label = document.createElement('div');
+      label.textContent = 'Digiroad overlays:';
+      label.style.fontWeight = 'bold';
+      label.style.marginBottom = '8px';
+      dropdownPanel.appendChild(label);
+      // Options
+      wmsOverlayList.forEach(layer => {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.marginBottom = '6px';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = layer.name;
+        checkbox.checked = selected.includes(layer.name);
+        checkbox.style.marginRight = '8px';
+        checkbox.addEventListener('change', function(e) {
+          const newSelected = Array.from(dropdownPanel.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+          onChange(newSelected);
+          dropdownButton.textContent = getOverlaySummary(newSelected);
+        });
+        row.appendChild(checkbox);
+        const title = document.createElement('span');
+        title.textContent = layer.title;
+        title.style.flex = '1';
+        row.appendChild(title);
+        if (wmsOverlayLegends[layer.name]) {
+          const legend = document.createElement('img');
+          legend.src = wmsOverlayLegends[layer.name];
+          legend.style.height = '20px';
+          legend.style.marginLeft = '8px';
+          legend.style.background = '#fff';
+          legend.style.border = '1px solid #ccc';
+          legend.style.borderRadius = '3px';
+          row.appendChild(legend);
+        }
+        dropdownPanel.appendChild(row);
+      });
+      // Dropdown open/close logic
+      let open = false;
+      function closeDropdown() {
+        dropdownPanel.style.display = 'none';
+        open = false;
+      }
+      function openDropdown() {
+        dropdownPanel.style.display = 'block';
+        open = true;
+      }
+      dropdownButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (open) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+      });
+      // Close on outside click
+      document.addEventListener('click', function(e) {
+        if (!dropdownPanel.contains(e.target) && e.target !== dropdownButton) {
+          closeDropdown();
+        }
+      });
+      // Container
+      const container = document.createElement('div');
+      container.style.position = 'relative';
+      container.style.width = '100%';
+      container.appendChild(dropdownButton);
+      container.appendChild(dropdownPanel);
+      return { container, dropdownButton, dropdownPanel };
+    }
+
+    function addOverlaySelectorToMap() {
+      // Remove old
+      if (overlayDropdownButton && overlayDropdownButton.parentElement) overlayDropdownButton.parentElement.remove();
+      if (overlayDropdownPanel && overlayDropdownPanel.parentElement) overlayDropdownPanel.parentElement.remove();
+      if (overlaySelectorDiv) overlaySelectorDiv.remove();
+      const { container, dropdownButton, dropdownPanel } = createOverlayDropdown('main', overlayLayers, function(newSelected) {
+        overlayLayers = newSelected;
+        updateAllOverlays();
+        updatePermalinkWithFeatures();
+      });
+      overlaySelectorDiv = container;
+      overlayDropdownButton = dropdownButton;
+      overlayDropdownPanel = dropdownPanel;
+      overlaySelectorDiv.style.position = 'absolute';
+      overlaySelectorDiv.style.top = '60px';
+      overlaySelectorDiv.style.right = '10px';
+      overlaySelectorDiv.style.zIndex = 10;
+      overlaySelectorDiv.style.maxWidth = '320px';
+      overlaySelectorDiv.style.minWidth = '180px';
+      overlaySelectorDiv.style.boxSizing = 'border-box';
+      document.getElementById('map').appendChild(overlaySelectorDiv);
+      // Split mode selectors
+      if (leftOverlayDropdownButton && leftOverlayDropdownButton.parentElement) leftOverlayDropdownButton.parentElement.remove();
+      if (leftOverlayDropdownPanel && leftOverlayDropdownPanel.parentElement) leftOverlayDropdownPanel.parentElement.remove();
+      if (leftOverlaySelectorDiv) leftOverlaySelectorDiv.remove();
+      const left = createOverlayDropdown('left', overlayLayers, function(newSelected) {
+        overlayLayers = newSelected;
+        updateAllOverlays();
+        updatePermalinkWithFeatures();
+      });
+      leftOverlaySelectorDiv = left.container;
+      leftOverlayDropdownButton = left.dropdownButton;
+      leftOverlayDropdownPanel = left.dropdownPanel;
+      leftOverlaySelectorDiv.style.position = 'absolute';
+      leftOverlaySelectorDiv.style.top = '60px';
+      leftOverlaySelectorDiv.style.left = '10px';
+      leftOverlaySelectorDiv.style.zIndex = 10;
+      leftOverlaySelectorDiv.style.maxWidth = '320px';
+      leftOverlaySelectorDiv.style.minWidth = '180px';
+      leftOverlaySelectorDiv.style.boxSizing = 'border-box';
+      document.getElementById('map-left')?.appendChild(leftOverlaySelectorDiv);
+      if (rightOverlayDropdownButton && rightOverlayDropdownButton.parentElement) rightOverlayDropdownButton.parentElement.remove();
+      if (rightOverlayDropdownPanel && rightOverlayDropdownPanel.parentElement) rightOverlayDropdownPanel.parentElement.remove();
+      if (rightOverlaySelectorDiv) rightOverlaySelectorDiv.remove();
+      const right = createOverlayDropdown('right', overlayLayers, function(newSelected) {
+        overlayLayers = newSelected;
+        updateAllOverlays();
+        updatePermalinkWithFeatures();
+      });
+      rightOverlaySelectorDiv = right.container;
+      rightOverlayDropdownButton = right.dropdownButton;
+      rightOverlayDropdownPanel = right.dropdownPanel;
+      rightOverlaySelectorDiv.style.position = 'absolute';
+      rightOverlaySelectorDiv.style.top = '60px';
+      rightOverlaySelectorDiv.style.right = '10px';
+      rightOverlaySelectorDiv.style.zIndex = 10;
+      rightOverlaySelectorDiv.style.maxWidth = '320px';
+      rightOverlaySelectorDiv.style.minWidth = '180px';
+      rightOverlaySelectorDiv.style.boxSizing = 'border-box';
+      document.getElementById('map-right')?.appendChild(rightOverlaySelectorDiv);
     }
   });
