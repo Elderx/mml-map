@@ -20,7 +20,12 @@ import Polygon from 'ol/geom/Polygon.js';
 import Overlay from 'ol/Overlay.js';
 import { getLength } from 'ol/sphere.js';
 import TileWMS from 'ol/source/TileWMS.js';
+import XYZ from 'ol/source/XYZ.js';
+import { applyStyle } from 'ol-mapbox-style';
+import VectorTileLayer from 'ol/layer/VectorTile.js';
+import VectorTileSource from 'ol/source/VectorTile.js';
 
+const mapboxAccessToken = 'pk.eyJ1IjoiZWxkZXJ4IiwiYSI6ImNqdHNrdHlmbDA1bjczem81ZTQzZnJ3engifQ.2PoeE03vtRBPj1D_-ESbrw';
 const apiKey = '977cd66e-8512-460a-83d3-cb405325c3ff',
   epsg = 'EPSG:3857',
   tileMatrixSet = 'WGS84_Pseudo-Mercator',
@@ -28,12 +33,22 @@ const apiKey = '977cd66e-8512-460a-83d3-cb405325c3ff',
   wmsUrl = 'https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/wms',
   wmsCapabilitiesUrl = 'https://avoinapi.vaylapilvi.fi/vaylatiedot/digiroad/wms?request=getcapabilities&service=wms';
 
+// Mapbox base URL and attribution
+const mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZWxkZXJ4IiwiYSI6ImNqdHNrdHlmbDA1bjczem81ZTQzZnJ3engifQ.2PoeE03vtRBPj1D_-ESbrw';
+const mbAttr = '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
 const hardcodedLayers = [
   { id: 'taustakartta', name: 'Taustakartta', type: 'wmts' },
   { id: 'maastokartta', name: 'Maastokartta', type: 'wmts' },
   { id: 'selkokartta', name: 'Selkokartta', type: 'wmts' },
   { id: 'ortokuva', name: 'Ortokuva', type: 'wmts' },
-  { id: 'osm', name: 'OpenStreetMap', type: 'osm' }
+  { id: 'osm', name: 'OpenStreetMap', type: 'osm' },
+  { id: 'mapbox_light', name: 'Mapbox Light', type: 'mapbox', styleUrl: 'mapbox://styles/mapbox/light-v11' },
+  { id: 'mapbox_dark', name: 'Mapbox Dark', type: 'mapbox', styleUrl: 'mapbox://styles/mapbox/dark-v11' },
+  { id: 'mapbox_streets', name: 'Mapbox Streets', type: 'mapbox', styleUrl: 'mapbox://styles/mapbox/streets-v12' },
+  { id: 'mapbox_outdoors', name: 'Mapbox Outdoors', type: 'mapbox', styleUrl: 'mapbox://styles/mapbox/outdoors-v12' },
+  { id: 'esri_world_imagery', name: 'Esri World Imagery', type: 'esri_sat' },
+  { id: 'cartodb_dark', name: 'CartoDB Dark', type: 'cartodb_dark' }
 ];
 
 const parser = new WMTSCapabilities();
@@ -60,6 +75,11 @@ let overlayLayers = [];
 let overlayLayerObjects = { main: [], left: [], right: [] };
 let wmsOverlayList = [];
 let wmsOverlayLegends = {};
+let digiroadOverlayList = [];
+let digiroadOverlayLayers = [];
+let genericOverlayList = [];
+let genericOverlayLayers = [];
+let genericOverlayLayerObjects = { main: [], left: [], right: [] };
 
 let overlaySelectorDiv = null;
 let leftOverlaySelectorDiv = null;
@@ -229,6 +249,32 @@ fetch(capsUrl)
         return new TileLayer({
           opacity: 1,
           source: new OSM()
+        });
+      }
+      if (layerInfo && layerInfo.type === 'mapbox') {
+        const vtLayer = new VectorTileLayer({
+          declutter: true,
+          visible: true
+        });
+        applyStyle(vtLayer, layerInfo.styleUrl, { accessToken: mapboxAccessToken });
+        return vtLayer;
+      }
+      if (layerInfo && layerInfo.type === 'esri_sat') {
+        return new TileLayer({
+          opacity: 1,
+          source: new XYZ({
+            url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            attributions: 'Tiles © Esri'
+          })
+        });
+      }
+      if (layerInfo && layerInfo.type === 'cartodb_dark') {
+        return new TileLayer({
+          opacity: 1,
+          source: new XYZ({
+            url: 'https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            attributions: '© OpenStreetMap contributors © CARTO'
+          })
         });
       }
       const options = optionsFromCapabilities(result, {
@@ -1301,6 +1347,8 @@ fetch(capsUrl)
       overlayLayers = [];
       if (params.overlays) {
         overlayLayers = params.overlays.split(';').filter(Boolean);
+        digiroadOverlayLayers = overlayLayers.filter(name => digiroadOverlayList.some(l => l.name === name));
+        genericOverlayLayers = overlayLayers.filter(name => genericOverlayList.some(l => l.name === name));
         updateAllOverlays();
       }
       showAllDrawables();
@@ -1412,8 +1460,9 @@ fetch(capsUrl)
         measureStr = `&measure=${coords.map(pair => pair.join(",")).join(';')}`;
       }
       let overlaysStr = '';
-      if (overlayLayers && overlayLayers.length > 0) {
-        overlaysStr = `&overlays=${overlayLayers.join(';')}`;
+      const allOverlays = [...digiroadOverlayLayers, ...genericOverlayLayers];
+      if (allOverlays.length > 0) {
+        overlaysStr = `&overlays=${allOverlays.join(';')}`;
       }
       const view = isSplit && leftMap ? leftMap.getView() : map.getView();
       const zoom = view.getZoom();
@@ -1444,21 +1493,23 @@ fetch(capsUrl)
         const parser = new DOMParser();
         const xml = parser.parseFromString(xmlText, 'text/xml');
         const layers = Array.from(xml.querySelectorAll('Layer > Layer'));
-        wmsOverlayList = layers.map(layer => {
+        digiroadOverlayList = layers.map(layer => {
           const name = layer.querySelector('Name')?.textContent;
           const title = layer.querySelector('Title')?.textContent;
           const legendUrl = layer.querySelector('LegendURL OnlineResource')?.getAttribute('xlink:href');
           if (name && title) {
             if (legendUrl) wmsOverlayLegends[name] = legendUrl;
-            return { name, title };
+            return { name, title, type: 'wms' };
           }
           return null;
         }).filter(Boolean);
         // After overlays loaded, add overlay selectors
         addOverlaySelectorToMap();
       });
+    // --- Overlay state for both menus ---
 
     function createWMSOverlayLayer(layerName) {
+      // Default WMS
       return new TileLayer({
         opacity: 0.7,
         source: new TileWMS({
@@ -1469,6 +1520,7 @@ fetch(capsUrl)
         zIndex: 50,
       });
     }
+
     function updateAllOverlays() {
       // Remove all overlays from all maps
       ['main', 'left', 'right'].forEach(key => {
@@ -1478,9 +1530,15 @@ fetch(capsUrl)
           if (key === 'right' && rightMap) rightMap.removeLayer(layer);
         });
         overlayLayerObjects[key] = [];
+        (genericOverlayLayerObjects[key] || []).forEach(layer => {
+          if (key === 'main' && map) map.removeLayer(layer);
+          if (key === 'left' && leftMap) leftMap.removeLayer(layer);
+          if (key === 'right' && rightMap) rightMap.removeLayer(layer);
+        });
+        genericOverlayLayerObjects[key] = [];
       });
-      // Add overlays to all active maps
-      overlayLayers.forEach(layerName => {
+      // Add Digiroad overlays to all active maps
+      digiroadOverlayLayers.forEach(layerName => {
         const layer = createWMSOverlayLayer(layerName);
         overlayLayerObjects.main.push(layer);
         if (map) map.addLayer(layer);
@@ -1493,37 +1551,38 @@ fetch(capsUrl)
           if (rightMap) rightMap.addLayer(rightLayer);
         }
       });
+      // Add generic overlays to all active maps
+      genericOverlayLayers.forEach(layerName => {
+        const layer = createWMSOverlayLayer(layerName);
+        genericOverlayLayerObjects.main.push(layer);
+        if (map) map.addLayer(layer);
+        if (isSplit) {
+          const leftLayer = createWMSOverlayLayer(layerName);
+          genericOverlayLayerObjects.left.push(leftLayer);
+          if (leftMap) leftMap.addLayer(leftLayer);
+          const rightLayer = createWMSOverlayLayer(layerName);
+          genericOverlayLayerObjects.right.push(rightLayer);
+          if (rightMap) rightMap.addLayer(rightLayer);
+        }
+      });
     }
 
-    // --- Split screen overlay logic ---
-    const _activateSplitScreenWithOverlays = activateSplitScreen;
-    activateSplitScreen = function() {
-      _activateSplitScreenWithOverlays();
-      updateAllOverlays();
-    };
-    const _deactivateSplitScreenWithOverlays = deactivateSplitScreen;
-    deactivateSplitScreen = function() {
-      _deactivateSplitScreenWithOverlays();
-      updateAllOverlays();
-    };
-
-    function getOverlaySummary(selected) {
+    function getOverlaySummary(selected, overlayList) {
       if (!selected || selected.length === 0) return 'No overlays';
       if (selected.length === 1) {
-        const found = wmsOverlayList.find(l => l.name === selected[0]);
+        const found = overlayList.find(l => l.name === selected[0]);
         return found ? found.title : selected[0];
       }
       if (selected.length <= 2) {
         return selected.map(n => {
-          const found = wmsOverlayList.find(l => l.name === n);
+          const found = overlayList.find(l => l.name === n);
           return found ? found.title : n;
         }).join(', ');
       }
       return `${selected.length} selected`;
     }
 
-    function createOverlayDropdown(mapKey, selected, onChange) {
-      // mapKey: 'main', 'left', 'right'
+    function createOverlayDropdown(mapKey, selected, onChange, overlayList, labelText) {
       let dropdownButton = document.createElement('button');
       dropdownButton.type = 'button';
       dropdownButton.className = 'overlay-dropdown-btn';
@@ -1539,7 +1598,7 @@ fetch(capsUrl)
       dropdownButton.style.boxSizing = 'border-box';
       dropdownButton.style.outline = 'none';
       dropdownButton.style.position = 'relative';
-      dropdownButton.textContent = getOverlaySummary(selected);
+      dropdownButton.textContent = getOverlaySummary(selected, overlayList);
       let dropdownPanel = document.createElement('div');
       dropdownPanel.className = 'overlay-dropdown-panel';
       dropdownPanel.style.display = 'none';
@@ -1559,12 +1618,12 @@ fetch(capsUrl)
       dropdownPanel.style.zIndex = '100';
       // Label
       const label = document.createElement('div');
-      label.textContent = 'Digiroad overlays:';
+      label.textContent = labelText;
       label.style.fontWeight = 'bold';
       label.style.marginBottom = '8px';
       dropdownPanel.appendChild(label);
       // Options
-      wmsOverlayList.forEach(layer => {
+      overlayList.forEach(layer => {
         const row = document.createElement('div');
         row.style.display = 'flex';
         row.style.alignItems = 'center';
@@ -1577,14 +1636,14 @@ fetch(capsUrl)
         checkbox.addEventListener('change', function(e) {
           const newSelected = Array.from(dropdownPanel.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
           onChange(newSelected);
-          dropdownButton.textContent = getOverlaySummary(newSelected);
+          dropdownButton.textContent = getOverlaySummary(newSelected, overlayList);
         });
         row.appendChild(checkbox);
         const title = document.createElement('span');
         title.textContent = layer.title;
         title.style.flex = '1';
         row.appendChild(title);
-        if (wmsOverlayLegends[layer.name]) {
+        if (layer.type === 'wms' && wmsOverlayLegends[layer.name]) {
           const legend = document.createElement('img');
           legend.src = wmsOverlayLegends[layer.name];
           legend.style.height = '20px';
@@ -1634,14 +1693,15 @@ fetch(capsUrl)
       if (overlayDropdownButton && overlayDropdownButton.parentElement) overlayDropdownButton.parentElement.remove();
       if (overlayDropdownPanel && overlayDropdownPanel.parentElement) overlayDropdownPanel.parentElement.remove();
       if (overlaySelectorDiv) overlaySelectorDiv.remove();
-      const { container, dropdownButton, dropdownPanel } = createOverlayDropdown('main', overlayLayers, function(newSelected) {
-        overlayLayers = newSelected;
+      // Digiroad overlays
+      const digiroad = createOverlayDropdown('main', digiroadOverlayLayers, function(newSelected) {
+        digiroadOverlayLayers = newSelected;
         updateAllOverlays();
         updatePermalinkWithFeatures();
-      });
-      overlaySelectorDiv = container;
-      overlayDropdownButton = dropdownButton;
-      overlayDropdownPanel = dropdownPanel;
+      }, digiroadOverlayList, 'Digiroad overlays:');
+      overlaySelectorDiv = digiroad.container;
+      overlayDropdownButton = digiroad.dropdownButton;
+      overlayDropdownPanel = digiroad.dropdownPanel;
       overlaySelectorDiv.style.position = 'absolute';
       overlaySelectorDiv.style.top = '60px';
       overlaySelectorDiv.style.right = '10px';
@@ -1650,44 +1710,23 @@ fetch(capsUrl)
       overlaySelectorDiv.style.minWidth = '180px';
       overlaySelectorDiv.style.boxSizing = 'border-box';
       document.getElementById('map').appendChild(overlaySelectorDiv);
-      // Split mode selectors
-      if (leftOverlayDropdownButton && leftOverlayDropdownButton.parentElement) leftOverlayDropdownButton.parentElement.remove();
-      if (leftOverlayDropdownPanel && leftOverlayDropdownPanel.parentElement) leftOverlayDropdownPanel.parentElement.remove();
-      if (leftOverlaySelectorDiv) leftOverlaySelectorDiv.remove();
-      const left = createOverlayDropdown('left', overlayLayers, function(newSelected) {
-        overlayLayers = newSelected;
+      // Generic overlays
+      if (window.genericOverlaySelectorDiv) window.genericOverlaySelectorDiv.remove();
+      const generic = createOverlayDropdown('main', genericOverlayLayers, function(newSelected) {
+        genericOverlayLayers = newSelected;
         updateAllOverlays();
         updatePermalinkWithFeatures();
-      });
-      leftOverlaySelectorDiv = left.container;
-      leftOverlayDropdownButton = left.dropdownButton;
-      leftOverlayDropdownPanel = left.dropdownPanel;
-      leftOverlaySelectorDiv.style.position = 'absolute';
-      leftOverlaySelectorDiv.style.top = '60px';
-      leftOverlaySelectorDiv.style.left = '10px';
-      leftOverlaySelectorDiv.style.zIndex = 10;
-      leftOverlaySelectorDiv.style.maxWidth = '320px';
-      leftOverlaySelectorDiv.style.minWidth = '180px';
-      leftOverlaySelectorDiv.style.boxSizing = 'border-box';
-      document.getElementById('map-left')?.appendChild(leftOverlaySelectorDiv);
-      if (rightOverlayDropdownButton && rightOverlayDropdownButton.parentElement) rightOverlayDropdownButton.parentElement.remove();
-      if (rightOverlayDropdownPanel && rightOverlayDropdownPanel.parentElement) rightOverlayDropdownPanel.parentElement.remove();
-      if (rightOverlaySelectorDiv) rightOverlaySelectorDiv.remove();
-      const right = createOverlayDropdown('right', overlayLayers, function(newSelected) {
-        overlayLayers = newSelected;
-        updateAllOverlays();
-        updatePermalinkWithFeatures();
-      });
-      rightOverlaySelectorDiv = right.container;
-      rightOverlayDropdownButton = right.dropdownButton;
-      rightOverlayDropdownPanel = right.dropdownPanel;
-      rightOverlaySelectorDiv.style.position = 'absolute';
-      rightOverlaySelectorDiv.style.top = '60px';
-      rightOverlaySelectorDiv.style.right = '10px';
-      rightOverlaySelectorDiv.style.zIndex = 10;
-      rightOverlaySelectorDiv.style.maxWidth = '320px';
-      rightOverlaySelectorDiv.style.minWidth = '180px';
-      rightOverlaySelectorDiv.style.boxSizing = 'border-box';
-      document.getElementById('map-right')?.appendChild(rightOverlaySelectorDiv);
+      }, genericOverlayList, 'Other overlays:');
+      window.genericOverlaySelectorDiv = generic.container;
+      generic.container.style.position = 'absolute';
+      generic.container.style.top = '';
+      generic.container.style.right = '10px';
+      generic.container.style.zIndex = 10;
+      generic.container.style.maxWidth = '320px';
+      generic.container.style.minWidth = '180px';
+      generic.container.style.boxSizing = 'border-box';
+      generic.container.style.marginTop = '12px';
+      // Insert after Digiroad dropdown to stack vertically
+      overlaySelectorDiv.parentNode.insertBefore(generic.container, overlaySelectorDiv.nextSibling);
     }
   });
