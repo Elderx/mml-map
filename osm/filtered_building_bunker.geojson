@@ -1,0 +1,1514 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0144798,
+          60.1006865
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "description": "305mm 52 calibre length dual gun turret (Obuhov gun) built between 1931 and 1934.",
+        "gun_emplacement_type": "tankturret",
+        "military": "bunker",
+        "name": "305/52 O2 turret gun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.8186462,
+          60.2085092
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.8783304,
+          60.1462162
+        ]
+      },
+      "properties": {
+        "access": "no",
+        "building": "bunker",
+        "bunker_type": "munitions",
+        "historic": "yes",
+        "image": "https://finna.fi/Cover/Show?id=hkm.72416EFC-2CC0-4B01-BF1C-3AB21A53F465",
+        "military": "bunker",
+        "start_date": "1885"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.1449589,
+          60.078717
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "ZIF-25",
+        "description:en": "WW2 bunker",
+        "description:fi": "sotien aikainen linnoite",
+        "landuse": "military",
+        "military": "bunker",
+        "name": "Museoitu raunio"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0672242,
+          60.2189498
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "historic": "yes",
+        "military": "bunker",
+        "name": "Tykkiasema 65 Artillery station 65 (WW 1)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0673686,
+          60.2184488
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "historic": "yes",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0673669,
+          60.2187277
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "historic": "yes",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0425936,
+          60.2203776
+        ]
+      },
+      "properties": {
+        "access": "no",
+        "building": "bunker",
+        "graffiti:tag": "2PCMTK;Reno;stadin kingit;2πL;zil;chad;bles@kan meti;metk",
+        "military": "bunker",
+        "tunnel": "entrance"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0537126,
+          60.2399332
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0329032,
+          60.1888398
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "bomb_shelter",
+        "military": "bunker",
+        "ref": "B",
+        "tunnel": "entrance"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.1197572,
+          60.2205714
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.8327037,
+          60.2585808
+        ]
+      },
+      "properties": {
+        "addr:city": "Vantaa",
+        "addr:housenumber": "27",
+        "addr:postcode": "01650",
+        "addr:street": "Rajatorpantie",
+        "building": "bunker",
+        "entrance": "main",
+        "leisure": "sports_centre",
+        "name": "Rajatorpan kalliosuoja"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.2357171,
+          60.1380454
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9854893,
+          60.1386718
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "tourism": "attraction",
+        "wikidata": "Q131819088"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.3077717,
+          59.9300591
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "landuse": "military",
+        "military": "bunker",
+        "name": "Bunkkeri 303"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.3740511,
+          60.14652
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "description": "Bunkkerin raunio",
+        "landuse": "military",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.044928,
+          60.097746
+        ]
+      },
+      "properties": {
+        "access": "yes",
+        "building": "bunker",
+        "military": "bunker",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0434048,
+          60.2237038
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9970437,
+          60.1335768
+        ]
+      },
+      "properties": {
+        "alt_name": "100 millimetrin tornikanuuna",
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "tankturret",
+        "gun_turret": "yes",
+        "military": "bunker",
+        "name": "100 56 TK",
+        "wikidata": "Q131450459"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0091853,
+          60.136732
+        ]
+      },
+      "properties": {
+        "building": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9870915,
+          60.1383939
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "name": "280 RK 77 tykki",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9877577,
+          60.1383907
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "name": "280 RK 77 tykki",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9881978,
+          60.1384121
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "name": "280 RK 77 tykki",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9886888,
+          60.1384837
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "name": "280 RK 77 tykki",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9892385,
+          60.1400667
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker",
+        "name": "152/22 D"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9892233,
+          60.1401019
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.989207,
+          60.1401416
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9891688,
+          60.1401841
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker",
+        "name": "229 RM 77"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.985279,
+          60.1389753
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9849729,
+          60.1392663
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9846952,
+          60.1399003
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9846696,
+          60.1400646
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9846284,
+          60.1402743
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9846227,
+          60.1404464
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9792314,
+          60.1443278
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9790711,
+          60.144491
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9789348,
+          60.1446377
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9788114,
+          60.1447799
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9734117,
+          60.1482294
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9738019,
+          60.1482318
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9742728,
+          60.1482524
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9735754,
+          60.1485577
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9729667,
+          60.148914
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9729153,
+          60.1490557
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0051131,
+          60.1349223
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0048065,
+          60.1350848
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9960694,
+          60.1306838
+        ]
+      },
+      "properties": {
+        "alt_name": "100 millimetrin tornikanuuna",
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "tankturret",
+        "gun_turret": "yes",
+        "military": "bunker",
+        "name": "100 56 TK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0007682,
+          60.1319241
+        ]
+      },
+      "properties": {
+        "alt_name": "100 millimetrin tornikanuuna",
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "tankturret",
+        "gun_turret": "yes",
+        "military": "bunker",
+        "name": "100 56 TK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9960283,
+          60.1328245
+        ]
+      },
+      "properties": {
+        "alt_name": "100 millimetrin tornikanuuna",
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "tankturret",
+        "gun_turret": "yes",
+        "military": "bunker",
+        "name": "100 56 TK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9962396,
+          60.1307009
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9974269,
+          60.1308313
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9976931,
+          60.1308551
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9979638,
+          60.1308774
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9984977,
+          60.1309273
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9987579,
+          60.1309512
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0003438,
+          60.132397
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0009239,
+          60.1323554
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9996835,
+          60.1325912
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.99704,
+          60.1321578
+        ]
+      },
+      "properties": {
+        "access": "no",
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Patteri VII",
+        "wikidata": "Q67484753"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0088948,
+          60.1353498
+        ]
+      },
+      "properties": {
+        "access": "no",
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Patteri Xb",
+        "wikidata": "Q131385953"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.008975,
+          60.1388887
+        ]
+      },
+      "properties": {
+        "access": "no",
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Patteri XI",
+        "wikidata": "Q67484750"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9958413,
+          60.136807
+        ]
+      },
+      "properties": {
+        "alt_name": "Patteri II",
+        "building": "bunker",
+        "defensive_works": "battery",
+        "name": "Länsirannan patteri",
+        "wikidata": "Q67484748"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9953756,
+          60.1389419
+        ]
+      },
+      "properties": {
+        "access": "yes",
+        "alt_name": "Patteri I",
+        "building": "bunker",
+        "defensive_works": "battery",
+        "name": "Kustaanmiekan patteri",
+        "wikidata": "Q67484747"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0132662,
+          60.1345674
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Patteri VII",
+        "wikidata": "Q131386182"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0238591,
+          60.1376839
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Koillisosan Patteri",
+        "wikidata": "Q131386009"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0226211,
+          60.1341168
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Patteri VI",
+        "wikidata": "Q131386309"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0181101,
+          60.1340584
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Patteri II",
+        "wikidata": "Q131386255"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0154221,
+          60.1007657
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "tankturret",
+        "gun_turret": "yes",
+        "military": "bunker",
+        "name": "152/50 T turret gun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0149553,
+          60.1007135
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "description": "Demilitarized 152/45 Canet gun. ",
+        "military": "bunker",
+        "name": "152/45 C naval gun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0140079,
+          60.1006603
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "description": "254mm 45 caliber length Durlacher gun",
+        "military": "bunker",
+        "name": "254/45 D naval gun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.8954053,
+          60.1877068
+        ]
+      },
+      "properties": {
+        "access": "private",
+        "alt_name": "Krepost Sveaborgin maalinnoitteet;Luolat G 1-5 (Meilahti)",
+        "building": "bunker",
+        "bunker_type": "personnel_shelter",
+        "description:en": "Bunkers are built originally for ammunition storage during 1st world war. During 2nd world war, Finnish Ministry of Defense had meetings in these bunkers.",
+        "description:fi": "Luolat rakennettu alunperin ampumatarvikkeiden varastointiin 1. maailmansodassa. Talvisodan aikana luolissa kokoontui Suomen puolustusministeriö.",
+        "historic": "bunker",
+        "historic:civilization": "modern",
+        "historic:period": "World War I",
+        "location": "underground",
+        "military": "bunker",
+        "name": "Viaporin maarintaman ampumatarvikevarasto",
+        "name:en": "Krepost Sveaborg ammunition bunkers",
+        "operator": "Puolustusvoimat",
+        "source": "survey",
+        "website": "https://www.kyppi.fi/to.aspx?id=112.1000013918",
+        "wikidata": "Q20249633",
+        "wikipedia:en": "Krepost Sveaborg"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.2892426,
+          59.9383243
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "historic": "yes",
+        "military": "bunker",
+        "name": "Bunkkeri 301"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.2843112,
+          59.9379949
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "historic": "yes",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.5758305,
+          59.9924414
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.2822448,
+          59.9390749
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.2252804,
+          60.5292656
+        ]
+      },
+      "properties": {
+        "abandoned": "yes",
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9888003,
+          60.1389581
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "gun_emplacement",
+        "gun_emplacement_type": "naval",
+        "historic": "cannon",
+        "military": "bunker",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.7903768,
+          60.1574898
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.8540273,
+          60.1635334
+        ]
+      },
+      "properties": {
+        "addr:city": "Helsinki",
+        "addr:housenumber": "11",
+        "addr:postcode": "00200",
+        "addr:street": "Sotkatie",
+        "building": "bunker",
+        "bunker_type": "bomb_shelter",
+        "military": "bunker",
+        "name": "Koivusaaren metroaseman yleinen väestönsuoja",
+        "note": "Ei armeijan kohde, mutta paremppa tunnistetta ei löytynyt",
+        "website": "https://palvelukartta.hel.fi/fi/unit/68539"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9965766,
+          60.1364637
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "munitions",
+        "military": "bunker",
+        "name": "Ruutivarasto 54",
+        "wikidata": "Q67485307"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9948201,
+          60.1391756
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "munitions",
+        "military": "bunker",
+        "name": "Ruutivarasto 61",
+        "wikidata": "Q67485308"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9960916,
+          60.1365695
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "munitions",
+        "military": "bunker",
+        "name": "Ruutikellari 55",
+        "wikidata": "Q67484731"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9957869,
+          60.1371128
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "munitions",
+        "military": "bunker",
+        "name": "Ruutikellari 56",
+        "wikidata": "Q67485199"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9956961,
+          60.1372507
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "munitions",
+        "military": "bunker",
+        "name": "Ruutikellari 57",
+        "wikidata": "Q67485200"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.9964065,
+          60.1371748
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "munitions",
+        "military": "bunker",
+        "name": "Ruutikellari 58",
+        "wikidata": "Q67485202"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0011073,
+          60.1325808
+        ]
+      },
+      "properties": {
+        "access": "no",
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Patteri IX",
+        "wikidata": "Q67484756"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0087294,
+          60.1861453
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "bomb_shelter",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0111354,
+          60.1881388
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "bomb_shelter",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0572805,
+          60.2356797
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "yes",
+        "building": "bunker",
+        "defensive_works": "battery",
+        "military": "bunker",
+        "name": "Patteri III",
+        "source": "MML",
+        "type": "multipolygon",
+        "wikidata": "Q131386236"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "building": "bunker",
+        "military": "bunker",
+        "type": "multipolygon"
+      }
+    }
+  ]
+}
