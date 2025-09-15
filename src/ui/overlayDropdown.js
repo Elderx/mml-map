@@ -1,4 +1,5 @@
 import { updateAllOverlays } from '../map/overlays.js';
+import { updateOSMLegend } from './osmLegend.js';
 import { state } from '../state/store.js';
 
 function getOverlaySummary(selected, overlayList) {
@@ -150,6 +151,7 @@ export function mountOverlaySelectors(mainMapDiv, updatePermalinkWithFeatures) {
   const osm = createOverlayDropdown('main', osmSelected, function(newSelected) {
     state.osmSelectedIds = newSelected;
     updateAllOverlays();
+    updateOSMLegend();
     updatePermalinkWithFeatures();
   }, osmList, 'OSM Data:');
   window.osmOverlaySelectorDiv = osm.container;

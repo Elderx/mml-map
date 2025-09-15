@@ -49,6 +49,17 @@ export const state = {
   osmSelectedIds: [],
   osmLayerObjects: { main: [], left: [], right: [] },
 
+  // OSM interaction state
+  osmHoverPopup: null,
+  osmClickPopup: null,
+  osmLegendDiv: null,
+  osmColorPalette: [
+    '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
+    '#1abc9c', '#e67e22', '#34495e', '#f1c40f', '#e91e63',
+    '#00bcd4', '#4caf50', '#ff9800', '#795548', '#607d8b'
+  ],
+  osmAssignedColors: {}, // Maps osmId to assigned color
+
   overlaySelectorDiv: null,
   overlayDropdownButton: null,
   overlayDropdownPanel: null,

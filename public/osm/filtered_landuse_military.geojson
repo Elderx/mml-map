@@ -1,0 +1,469 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.1449589,
+          60.078717
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "bunker_type": "ZIF-25",
+        "description:en": "WW2 bunker",
+        "description:fi": "sotien aikainen linnoite",
+        "landuse": "military",
+        "military": "bunker",
+        "name": "Museoitu raunio"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.3077717,
+          59.9300591
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "landuse": "military",
+        "military": "bunker",
+        "name": "Bunkkeri 303"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.3740511,
+          60.14652
+        ]
+      },
+      "properties": {
+        "building": "bunker",
+        "description": "Bunkkerin raunio",
+        "landuse": "military",
+        "military": "bunker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.2994331,
+          60.1476275
+        ]
+      },
+      "properties": {
+        "historic": "ruins",
+        "landuse": "military"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.2896371,
+          60.1458306
+        ]
+      },
+      "properties": {
+        "historic": "ruins",
+        "landuse": "military"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "name": "Kuivasaari",
+        "name:fi": "Kuivasaari",
+        "name:sv": "Torra Mjölö",
+        "place": "island",
+        "type": "multipolygon",
+        "wikidata": "Q3351825"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "name": "Pikku Kuivasaari",
+        "name:fi": "Pikku Kuivasaari",
+        "name:sv": "Mjölöknekten",
+        "place": "island",
+        "type": "multipolygon",
+        "wikidata": "Q11888109"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Kontgrundet",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Flatgrundet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Makiloharun",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Fanskobben",
+        "name:sv": "Fanskobben",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Mossaskär",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Grästuvsgrundet",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Höggrund",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Snöbådan",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "place": "islet",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "natural": "bare_rock",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "name": "Santahamina",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "name": "Nuottasaari",
+        "name:fi": "Nuottasaari",
+        "name:sv": "Notholmen",
+        "place": "island",
+        "type": "multipolygon",
+        "wikidata": "Q24340244"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Ramsö",
+        "place": "island",
+        "type": "multipolygon",
+        "wikidata": "Q24315225",
+        "wikipedia": "fi:Ramsö (Kirkkonummi)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "name": "Mäkiluoto",
+        "name:fi": "Mäkiluoto",
+        "name:sv": "Makilo",
+        "place": "island",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "place": "island",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "place": "island",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "place": "island",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "place": "island",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "place": "island",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "place": "island",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "access": "no",
+        "landuse": "military",
+        "place": "island",
+        "type": "multipolygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Rannikkoprikaati",
+        "name:en": "Coastal Brigade",
+        "name:sv": "Kustbrigaden",
+        "start_date": "2015-1-1",
+        "type": "multipolygon",
+        "website": "https://merivoimat.fi/rannikkoprikaati",
+        "wikidata": "Q18682502",
+        "wikipedia": "fi:Rannikkoprikaati"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "name": "Miessaari",
+        "name:fi": "Miessaari",
+        "name:sv": "Karlö",
+        "place": "island",
+        "type": "multipolygon",
+        "wikidata": "Q18660829"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "landuse": "military",
+        "type": "multipolygon"
+      }
+    }
+  ]
+}

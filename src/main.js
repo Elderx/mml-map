@@ -14,6 +14,9 @@ import { updatePermalinkWithFeatures, updatePermalink } from './map/permalink.js
 import { syncViews } from './map/sync.js';
 import { createLayerSelectorDropdown } from './ui/layerSelector.js';
 import { updateAllOverlays } from './map/overlays.js';
+import { createOSMPopup } from './ui/osmPopup.js';
+import { createOSMLegend, updateOSMLegend } from './ui/osmLegend.js';
+import { setupOSMInteractions } from './map/osmInteractions.js';
 import { fromLonLat } from 'ol/proj';
 import 'ol/ol.css';
 
@@ -54,6 +57,8 @@ async function bootstrap() {
     const center = mainView.getCenter(); const zoom = mainView.getZoom(); const rotation = mainView.getRotation();
     createSplitMaps(result, center, zoom, rotation);
     enableOverlayInfoClickHandlers();
+    setupOSMInteractions(state.leftMap);
+    setupOSMInteractions(state.rightMap);
     state.leftMapMoveendListener = function () { if (!state.restoringFromPermalink && state.permalinkInitialized) updatePermalinkWithFeatures(); };
     state.rightMapMoveendListener = function () { if (!state.restoringFromPermalink && state.permalinkInitialized) updatePermalinkWithFeatures(); };
     state.leftMap.on('moveend', state.leftMapMoveendListener);
@@ -106,7 +111,13 @@ async function bootstrap() {
   await fetchOverlayCapabilities();
   mountOverlaySelectors(mainMapDiv, updatePermalinkWithFeatures);
 
+  // Initialize OSM components
+  createOSMPopup();
+  createOSMLegend();
+  updateOSMLegend();
+
   enableOverlayInfoClickHandlers();
+  setupOSMInteractions(state.map);
 
   function restoreFeaturesFromURL(params) {
     state.restoringFromPermalink = true;

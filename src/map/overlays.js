@@ -67,19 +67,42 @@ export function updateAllOverlays() {
   });
 
   // Add OSM GeoJSON overlays to all active maps
-  const makeOsmStyle = () => new Style({
-    image: new CircleStyle({ radius: 6, fill: new Fill({ color: 'red' }), stroke: new Stroke({ color: 'white', width: 2 }) }),
-    stroke: new Stroke({ color: 'blue', width: 2 }),
-    fill: new Fill({ color: 'rgba(0, 0, 255, 0.1)' }),
-  });
-  state.osmSelectedIds.forEach(osmId => {
+  state.osmSelectedIds.forEach((osmId) => {
     const item = state.osmItems.find(i => i.id === osmId);
     if (!item) return;
-    const mkLayer = () => new VectorLayer({
-      source: new VectorSource({ url: `/osm/${item.file}`, format: new GeoJSON() }),
-      zIndex: 60,
-      style: makeOsmStyle(),
+
+    // Assign stable color - use existing or assign new one
+    let color = state.osmAssignedColors[osmId];
+    if (!color) {
+      // Find first available color not in use
+      const usedColors = Object.values(state.osmAssignedColors);
+      const availableColor = state.osmColorPalette.find(c => !usedColors.includes(c));
+      color = availableColor || state.osmColorPalette[Object.keys(state.osmAssignedColors).length % state.osmColorPalette.length];
+      state.osmAssignedColors[osmId] = color;
+    }
+    const makeOsmStyle = () => new Style({
+      image: new CircleStyle({ 
+        radius: 6, 
+        fill: new Fill({ color }), 
+        stroke: new Stroke({ color: 'white', width: 2 }) 
+      }),
+      stroke: new Stroke({ color, width: 2 }),
+      fill: new Fill({ color: color + '20' }), // Add transparency
     });
+
+    const mkLayer = () => {
+      const layer = new VectorLayer({
+        source: new VectorSource({ url: `/osm/${item.file}`, format: new GeoJSON() }),
+        zIndex: 60,
+        style: makeOsmStyle(),
+      });
+      // Store metadata for interactions
+      layer.set('osmId', osmId);
+      layer.set('osmTitle', item.title);
+      layer.set('osmColor', color);
+      return layer;
+    };
+
     const mainLayer = mkLayer();
     state.osmLayerObjects.main.push(mainLayer);
     if (state.map) state.map.addLayer(mainLayer);
