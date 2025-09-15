@@ -45,6 +45,10 @@ export function updatePermalinkWithFeatures() {
   if (allOverlays.length > 0) {
     overlaysStr = `&overlays=${allOverlays.join(';')}`;
   }
+  let osmStr = '';
+  if (state.osmSelectedIds && state.osmSelectedIds.length > 0) {
+    osmStr = `&osm=${state.osmSelectedIds.join(';')}`;
+  }
   const view = state.isSplit && state.leftMap ? state.leftMap.getView() : state.map.getView();
   const zoom = view.getZoom();
   const center = view.getCenter();
@@ -61,7 +65,7 @@ export function updatePermalinkWithFeatures() {
     }
     params += `&layer=${layerId}`;
   }
-  params += markerStr + lineStr + polyStr + measureStr + overlaysStr;
+  params += markerStr + lineStr + polyStr + measureStr + overlaysStr + osmStr;
   window.history.replaceState({}, '', params);
 }
 

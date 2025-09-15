@@ -74,3 +74,16 @@ Notes
 - Google Places: The search bar requires a valid Google Maps API key. Update the script tag in `index.html` (`&key=...`) with your key, or remove the tag to disable search.
 - Mapbox styles: A Mapbox access token is referenced in `src/config/constants.js`. Replace it with your own token for production use.
 - Base path: See the two production options above. If you see 404s for assets in production, it’s almost always a base path versus server path mismatch.
+
+OSM Data overlays (GeoJSON)
+- Place your prefiltered GeoJSON files under the public `osm/` directory so they are served at `/osm/<file>.geojson`.
+  - Example: `public/osm/filtered_amenity_school.geojson` → URL `/osm/filtered_amenity_school.geojson`
+- Configure items in `src/state/store.js` under `osmItems`:
+  ```js
+  osmItems: [
+    { id: 'amenity_school', title: 'Amenity: School', file: 'filtered_amenity_school.geojson' },
+    { id: 'my_points', title: 'My Points', file: 'my_points.geojson' }
+  ]
+  ```
+- Use the new “OSM Data” dropdown in the UI (under overlays) to toggle datasets.
+- Selected datasets are persisted in the URL param `osm`, e.g. `&osm=amenity_school;my_points`.

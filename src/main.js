@@ -121,6 +121,11 @@ async function bootstrap() {
       state.genericOverlayLayers = state.overlayLayers.filter(name => state.genericOverlayList.some(l => l.name === name));
       updateAllOverlays();
     }
+    if (params.osm) {
+      const ids = params.osm.split(';').filter(Boolean);
+      state.osmSelectedIds = ids.filter(id => state.osmItems.some(i => i.id === id));
+      updateAllOverlays();
+    }
     showAllDrawables(showClickMarker);
     state.restoringFromPermalink = false;
     state.permalinkInitialized = true;

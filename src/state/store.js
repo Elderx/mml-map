@@ -40,6 +40,15 @@ export const state = {
   genericOverlayLayers: [],
   genericOverlayLayerObjects: { main: [], left: [], right: [] },
 
+  // OSM GeoJSON overlay state
+  osmItems: [
+    // Default examples; place files under /osm in the web root (public)
+    { id: 'man_made_mast', title: 'Man Made: Mast', file: 'filtered_man_made_mast.geojson' },
+    // Add more like: { id: 'highway_primary', title: 'Highway Primary', file: 'filtered_highway_primary.geojson' }
+  ],
+  osmSelectedIds: [],
+  osmLayerObjects: { main: [], left: [], right: [] },
+
   overlaySelectorDiv: null,
   overlayDropdownButton: null,
   overlayDropdownPanel: null,

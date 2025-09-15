@@ -112,40 +112,51 @@ export function mountOverlaySelectors(mainMapDiv, updatePermalinkWithFeatures) {
   if (state.overlayDropdownButton && state.overlayDropdownButton.parentElement) state.overlayDropdownButton.parentElement.remove();
   if (state.overlayDropdownPanel && state.overlayDropdownPanel.parentElement) state.overlayDropdownPanel.parentElement.remove();
   if (state.overlaySelectorDiv) state.overlaySelectorDiv.remove();
+  if (window.genericOverlaySelectorDiv) window.genericOverlaySelectorDiv.remove();
+  if (window.osmOverlaySelectorDiv) window.osmOverlaySelectorDiv.remove();
+
+  // Create a single absolute-positioned column container to stack all dropdowns
+  const column = document.createElement('div');
+  column.style.position = 'absolute';
+  column.style.top = '60px';
+  column.style.right = '10px';
+  column.style.zIndex = 10;
+  column.style.maxWidth = '320px';
+  column.style.minWidth = '180px';
+  column.style.boxSizing = 'border-box';
 
   const digiroad = createOverlayDropdown('main', state.digiroadOverlayLayers, function(newSelected) {
     state.digiroadOverlayLayers = newSelected;
     updateAllOverlays();
     updatePermalinkWithFeatures();
   }, state.digiroadOverlayList, 'Digiroad overlays:');
-  state.overlaySelectorDiv = digiroad.container;
+  state.overlaySelectorDiv = column;
   state.overlayDropdownButton = digiroad.dropdownButton;
   state.overlayDropdownPanel = digiroad.dropdownPanel;
-  state.overlaySelectorDiv.style.position = 'absolute';
-  state.overlaySelectorDiv.style.top = '60px';
-  state.overlaySelectorDiv.style.right = '10px';
-  state.overlaySelectorDiv.style.zIndex = 10;
-  state.overlaySelectorDiv.style.maxWidth = '320px';
-  state.overlaySelectorDiv.style.minWidth = '180px';
-  state.overlaySelectorDiv.style.boxSizing = 'border-box';
-  mainMapDiv.appendChild(state.overlaySelectorDiv);
+  column.appendChild(digiroad.container);
 
-  if (window.genericOverlaySelectorDiv) window.genericOverlaySelectorDiv.remove();
   const generic = createOverlayDropdown('main', state.genericOverlayLayers, function(newSelected) {
     state.genericOverlayLayers = newSelected;
     updateAllOverlays();
     updatePermalinkWithFeatures();
   }, state.genericOverlayList, 'Other overlays:');
   window.genericOverlaySelectorDiv = generic.container;
-  generic.container.style.position = 'absolute';
-  generic.container.style.top = '';
-  generic.container.style.right = '10px';
-  generic.container.style.zIndex = 10;
-  generic.container.style.maxWidth = '320px';
-  generic.container.style.minWidth = '180px';
-  generic.container.style.boxSizing = 'border-box';
   generic.container.style.marginTop = '12px';
-  state.overlaySelectorDiv.parentNode.insertBefore(generic.container, state.overlaySelectorDiv.nextSibling);
+  column.appendChild(generic.container);
+
+  // OSM Data dropdown (beneath generic)
+  const osmSelected = state.osmSelectedIds;
+  const osmList = state.osmItems.map(i => ({ name: i.id, title: i.title, type: 'geojson' }));
+  const osm = createOverlayDropdown('main', osmSelected, function(newSelected) {
+    state.osmSelectedIds = newSelected;
+    updateAllOverlays();
+    updatePermalinkWithFeatures();
+  }, osmList, 'OSM Data:');
+  window.osmOverlaySelectorDiv = osm.container;
+  osm.container.style.marginTop = '12px';
+  column.appendChild(osm.container);
+
+  mainMapDiv.appendChild(column);
 }
 
 

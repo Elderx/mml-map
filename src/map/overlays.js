@@ -1,5 +1,12 @@
 import TileLayer from 'ol/layer/Tile.js';
 import TileWMS from 'ol/source/TileWMS.js';
+import VectorLayer from 'ol/layer/Vector.js';
+import VectorSource from 'ol/source/Vector.js';
+import GeoJSON from 'ol/format/GeoJSON.js';
+import Style from 'ol/style/Style.js';
+import Stroke from 'ol/style/Stroke.js';
+import Fill from 'ol/style/Fill.js';
+import CircleStyle from 'ol/style/Circle.js';
 import { wmsUrl } from '../config/constants.js';
 import { state } from '../state/store.js';
 
@@ -25,6 +32,12 @@ export function updateAllOverlays() {
       if (key === 'right' && state.rightMap) state.rightMap.removeLayer(layer);
     });
     state.genericOverlayLayerObjects[key] = [];
+    (state.osmLayerObjects[key] || []).forEach(layer => {
+      if (key === 'main' && state.map) state.map.removeLayer(layer);
+      if (key === 'left' && state.leftMap) state.leftMap.removeLayer(layer);
+      if (key === 'right' && state.rightMap) state.rightMap.removeLayer(layer);
+    });
+    state.osmLayerObjects[key] = [];
   });
   state.digiroadOverlayLayers.forEach(layerName => {
     const layer = createWMSOverlayLayer(layerName);
@@ -49,6 +62,33 @@ export function updateAllOverlays() {
       if (state.leftMap) state.leftMap.addLayer(leftLayer);
       const rightLayer = createWMSOverlayLayer(layerName);
       state.genericOverlayLayerObjects.right.push(rightLayer);
+      if (state.rightMap) state.rightMap.addLayer(rightLayer);
+    }
+  });
+
+  // Add OSM GeoJSON overlays to all active maps
+  const makeOsmStyle = () => new Style({
+    image: new CircleStyle({ radius: 6, fill: new Fill({ color: 'red' }), stroke: new Stroke({ color: 'white', width: 2 }) }),
+    stroke: new Stroke({ color: 'blue', width: 2 }),
+    fill: new Fill({ color: 'rgba(0, 0, 255, 0.1)' }),
+  });
+  state.osmSelectedIds.forEach(osmId => {
+    const item = state.osmItems.find(i => i.id === osmId);
+    if (!item) return;
+    const mkLayer = () => new VectorLayer({
+      source: new VectorSource({ url: `/osm/${item.file}`, format: new GeoJSON() }),
+      zIndex: 60,
+      style: makeOsmStyle(),
+    });
+    const mainLayer = mkLayer();
+    state.osmLayerObjects.main.push(mainLayer);
+    if (state.map) state.map.addLayer(mainLayer);
+    if (state.isSplit) {
+      const leftLayer = mkLayer();
+      state.osmLayerObjects.left.push(leftLayer);
+      if (state.leftMap) state.leftMap.addLayer(leftLayer);
+      const rightLayer = mkLayer();
+      state.osmLayerObjects.right.push(rightLayer);
       if (state.rightMap) state.rightMap.addLayer(rightLayer);
     }
   });
