@@ -78,12 +78,7 @@ Notes
 OSM Data overlays (GeoJSON)
 - Place your prefiltered GeoJSON files under the public `osm/` directory so they are served at `/osm/<file>.geojson`.
   - Example: `public/osm/filtered_amenity_school.geojson` → URL `/osm/filtered_amenity_school.geojson`
-- Configure items in `src/state/store.js` under `osmItems`:
-  ```js
-  osmItems: [
-    { id: 'amenity_school', title: 'Amenity: School', file: 'filtered_amenity_school.geojson' },
-    { id: 'my_points', title: 'My Points', file: 'my_points.geojson' }
-  ]
-  ```
-- Use the new “OSM Data” dropdown in the UI (under overlays) to toggle datasets.
+- The dropdown is auto-populated from those files. On `npm run dev` and `npm run build`, a manifest is generated at `public/osm/manifest.json`.
+- Entry titles are derived from filenames (e.g., `filtered_amenity_school.geojson` → `Filtered Amenity School`).
+- Use the “OSM Data” dropdown (under overlays) to toggle datasets.
 - Selected datasets are persisted in the URL param `osm`, e.g. `&osm=amenity_school;my_points`.

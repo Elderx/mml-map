@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "vite build",
-    "dev": "vite"
+    "build": "node scripts/generate-osm-manifest.mjs && vite build",
+    "dev": "vite",
+    "predev": "node scripts/generate-osm-manifest.mjs"
   }
 }
